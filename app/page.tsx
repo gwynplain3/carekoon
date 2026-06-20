@@ -11,10 +11,16 @@ import WaterWidget from '@/components/home/WaterWidget'
 import GroceryWidget from '@/components/home/GroceryWidget'
 import TodoWidget from '@/components/home/TodoWidget'
 import DiaryBlogWidget from '@/components/home/DiaryBlogWidget'
+import WeeklyProgressWidget from '@/components/health/WeeklyProgressWidget'
+import SOSButton from '@/components/home/SOSButton'
+import FamilyPhotoFrame from '@/components/home/FamilyPhotoFrame'
+import CalorieWidget from '@/components/home/CalorieWidget'
 import Popup from '@/components/ui/Popup'
 import { 
   Plus, Loader2, ListTodo, Calendar, Clock, BookOpen, MessageSquare, ChevronRight, HeartPulse, Droplets, ShoppingCart, Users, Megaphone, Camera, User, Lock
 } from 'lucide-react'
+const STROKE_WIDTH = 2.5 // ponytail: per RULES.md for senior visibility
+
 import LayoutTransition from '@/components/layout/LayoutTransition'
 import Link from 'next/link'
 
@@ -55,13 +61,13 @@ export default function Home() {
     if (combined.length > 0 && !selectedElder) setSelectedElder({ id: combined[0].id, type: combined[0].type as any, name: combined[0].name })
   }
 
-  const [activeBroadcast, setActiveBroadcast] = useState<any>(null)
+  const [broadcasts, setBroadcasts] = useState<any[]>([])
 
   useEffect(() => {
-    if (targetId) fetchActiveBroadcast()
+    if (targetId) fetchActiveBroadcasts()
   }, [targetId, targetType])
 
-  async function fetchActiveBroadcast() {
+  async function fetchActiveBroadcasts() {
     let caretakerId = null
     
     if (targetType === 'virtual') {
@@ -79,9 +85,7 @@ export default function Home() {
         .eq('caretaker_id', caretakerId)
         .gt('expires_at', new Date().toISOString())
         .order('created_at', { ascending: false })
-        .limit(1)
-        .single()
-      setActiveBroadcast(data)
+      setBroadcasts(data || [])
     }
   }
 
@@ -132,47 +136,57 @@ export default function Home() {
               <p style={{ color: 'var(--text-muted)', fontSize: '1.4rem', margin: '6px 0 0 0' }}>วันนี้เป็นวันสุขภาพที่ดีครับ 🌿</p>
             </div>
           </div>
-          <div style={{ textAlign: 'right' }}>
-             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--primary-dark)', fontWeight: 'bold', fontSize: '1.1rem' }}><Calendar size={22} /> {thaiDate}</div>
-             <div style={{ fontSize: '2.2rem', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'flex-end' }}><Clock size={32} color="var(--text-muted)" />{today.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}</div>
+           <div style={{ textAlign: 'right' }}>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--primary-dark)', fontWeight: 'bold', fontSize: '1.2rem' }}><Calendar size={28} strokeWidth={STROKE_WIDTH} /> {thaiDate}</div>
+             <div style={{ fontSize: '2.5rem', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'flex-end' }}><Clock size={40} strokeWidth={STROKE_WIDTH} color="var(--text-muted)" />{today.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}</div>
           </div>
         </header>
         
-        {/* Active Broadcast Banner */}
-        <AnimatePresence>
-          {activeBroadcast && (
-            <motion.div 
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              style={{ overflow: 'hidden', marginBottom: '32px' }}
-            >
-              <div style={{ 
-                background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)', 
-                padding: '32px', 
-                borderRadius: '32px', 
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '24px',
-                boxShadow: '0 15px 35px rgba(2, 132, 199, 0.25)' 
-              }}>
-                <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '20px' }}>
-                  <Megaphone size={40} className="animate-pulse" />
+        {/* Multiple Active Broadcasts */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: broadcasts.length > 0 ? '32px' : 0 }}>
+          <AnimatePresence>
+            {broadcasts.map((b) => (
+              <motion.div 
+                key={b.id}
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                style={{ overflow: 'hidden' }}
+              >
+                <div style={{ 
+                  background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)', 
+                  padding: '24px 32px', 
+                  borderRadius: '32px', 
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '24px',
+                  boxShadow: '0 12px 24px rgba(22, 163, 74, 0.2)' 
+                }}>
+                  <div style={{ background: 'rgba(255,255,255,0.2)', padding: '16px', borderRadius: '20px' }}>
+                    <Megaphone size={40} strokeWidth={STROKE_WIDTH} className="animate-pulse" />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 'bold', opacity: 0.9, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>ประกาศสำคัญ</div>
+                    <div style={{ fontSize: '1.8rem', fontWeight: '900', lineHeight: '1.3' }}>{b.message}</div>
+                  </div>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '1.1rem', fontWeight: 'bold', opacity: 0.9, marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>ประกาศจากผู้ดูแล</div>
-                  <div style={{ fontSize: '1.8rem', fontWeight: '900', lineHeight: '1.3' }}>{activeBroadcast.message}</div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
 
         {/* Dashboard Widgets Container */}
         {targetId && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-            <MedicineWidget userId={targetId} targetType={targetType} />
+            <SOSButton userId={targetId} targetType={targetType} />
+            <FamilyPhotoFrame userId={targetId} targetType={targetType} />
+            <WeeklyProgressWidget userId={targetId} targetType={targetType} />
+            
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px' }}>
+              <MedicineWidget userId={targetId} targetType={targetType} />
+              <CalorieWidget userId={targetId} targetType={targetType} />
+            </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px' }}>
                <TodoWidget userId={targetId} targetType={targetType} />

@@ -401,7 +401,7 @@ export default function MedicineWidget({ userId, targetType = 'real', readOnly =
 
                 {/* Footer Section: Button */}
                 <AnimatePresence>
-                  {!isDone && !effectiveReadOnly && (
+                  {!isDone && (
                     <motion.div
                       initial={{ height: 0, opacity: 0, marginTop: 0 }}
                       animate={{ height: 'auto', opacity: 1, marginTop: '10px' }}

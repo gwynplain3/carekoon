@@ -78,7 +78,7 @@ export default function WaterWidget({ userId, targetType = 'real', readOnly = fa
         ) : (
           <div style={{ width: '100%' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: effectiveReadOnly ? '12px' : '24px' }}>
-              {!effectiveReadOnly && (
+              {(true) && (
                 <button onClick={() => update(glasses - 1)} disabled={glasses === 0} style={{ width: '56px', height: '56px', borderRadius: '50%', border: '2px solid #e2e8f0', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Minus size={20} color="#64748b" /></button>
               )}
 
@@ -89,7 +89,7 @@ export default function WaterWidget({ userId, targetType = 'real', readOnly = fa
                 <div style={{ fontSize: '1rem', color: '#64748b' }}>/ {GOAL} แก้ว</div>
               </div>
 
-              {!effectiveReadOnly && (
+              {(true) && (
                 <button onClick={() => update(glasses + 1)} disabled={done} style={{ width: '56px', height: '56px', borderRadius: '50%', border: 'none', background: '#0ea5e9', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Plus size={24} /></button>
               )}
             </div>

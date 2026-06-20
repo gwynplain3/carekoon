@@ -1,27 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700;800&family=Inter:wght@400;700;900&display=swap');
 
 :root {
-  /* Colors - Modern Professional Blue Theme */
-  --primary: #0284c7;
+  /* Colors - Branding (Light Blue & White theme) */
+  --primary: #0ea5e9;
   --primary-light: #f0f9ff;
   --primary-dark: #0369a1;
-  --background: #fcfdfe;
+  --background: #ffffff;
   --surface: #ffffff;
   --text: #1e293b;          /* Slate 800 */
   --text-muted: #64748b;    /* Slate 500 */
   --danger: #ef4444;
   --border: #f1f5f9;
 
-  /* Professional Typography Scale */
-  --base-font-size: 16px; 
-  --line-height: 1.5;
+  /* Senior Accessibility Typography per RULES.md */
+  --base-font-size: 20px; 
+  --line-height: 1.6;
   
   /* Spacing System */
-  --radius-lg: 24px;
-  --radius-md: 16px;
-  --radius-sm: 10px;
+  --radius-lg: 32px;
+  --radius-md: 20px;
+  --radius-sm: 12px;
   --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-  --section-gap: 32px;
+  --section-gap: 40px;
 }
 
 * {
@@ -47,20 +47,20 @@ body {
   flex-direction: column;
 }
 
-/* Professional Buttons */
+/* Senior-Friendly Buttons per RULES.md */
 .btn-large {
-  min-height: 52px;
-  padding: 12px 28px;
-  font-size: 1.1rem;
-  font-weight: 700;
+  min-height: 56px;
+  padding: 14px 32px;
+  font-size: 1.25rem;
+  font-weight: 800;
   border-radius: var(--radius-md);
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  transition: all 0.2s ease;
+  gap: 12px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -211,7 +211,26 @@ h2 { font-size: 1.6rem; margin-bottom: 20px; }
     align-items: flex-start;
     gap: 16px;
   }
-  .forum-header .btn-large {
-    width: 100%;
-  }
+}
+
+/* Caretaker Mode Layouts */
+.caretaker-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+.bento-card-wide { grid-column: span 12; }
+.bento-card-large { grid-column: span 6; }
+.bento-card { grid-column: span 4; }
+
+@media (max-width: 1024px) {
+  .bento-card-large, .bento-card { grid-column: span 12; }
+}
+
+@media (max-width: 640px) {
+  .main-wrapper { margin-left: 0; padding: 20px 20px 120px; }
+  h1 { font-size: 2rem; }
+  .btn-large { width: 100%; }
 }

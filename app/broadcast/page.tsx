@@ -8,6 +8,7 @@ import SideNav from '@/components/layout/SideNav'
 import LayoutTransition from '@/components/layout/LayoutTransition'
 import { motion, AnimatePresence } from 'framer-motion'
 
+const STROKE_WIDTH = 2.5
 export default function BroadcastPage() {
   const { user, profile, loading: authLoading } = useUser()
   const [message, setMessage] = useState('')
@@ -67,7 +68,7 @@ export default function BroadcastPage() {
         <header style={{ marginBottom: '40px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px' }}>
             <div style={{ background: 'var(--primary)', padding: '12px', borderRadius: '16px', color: 'white' }}>
-              <Megaphone size={32} />
+              <Megaphone size={32} strokeWidth={STROKE_WIDTH} />
             </div>
             <h1 style={{ margin: 0 }}>ประกาศถึงผู้อยู่อาศัย</h1>
           </div>
@@ -141,7 +142,7 @@ export default function BroadcastPage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                       <Clock size={16} /> หมดเวลา: {new Date(b.expires_at).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}
                     </div>
-                    <button onClick={() => deleteBroadcast(b.id)} style={{ color: 'var(--danger)', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={20} /></button>
+                    <button onClick={() => deleteBroadcast(b.id)} style={{ color: 'var(--danger)', background: 'none', border: 'none', cursor: 'pointer' }}><Trash2 size={24} strokeWidth={STROKE_WIDTH} /></button>
                   </div>
                 </div>
               ))}

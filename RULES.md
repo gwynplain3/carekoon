@@ -26,8 +26,8 @@ The UI must be "Invisible but Present" — extremely easy to use, using high-con
    - **Fonts**: Base size `20px` (`1.25rem`). Hero headers `2.5rem` (`h1`), Section headers `1.8rem` (`h2`).
    - **Spacing**: Minimum `12px` gap between interactive elements.
    - **Contrast**: Use WCAG AAA guidelines. Backgrounds: White, Primary: Green.
-2. **Branding (Green/White theme)**:
-   - **Primary**: Green (`#16A34A`) | **Dark**: `#15803D` | **Light**: `#DCFCE7` | **Background**: `#FFFFFF`
+2. **Branding (Light Blue/White theme)**:
+   - **Primary**: Light Blue (`#0EA5E9`) | **Dark**: `#0369A1` | **Light**: `#F0F9FF` | **Background**: `#FFFFFF`
 3. **Language & Tone**:
    - **Thai Only**: Use only Thai for user-facing text.
    - **Polite/Friendly**: Ending sentences with "ครับ" (หรือ "ค่ะ") and using "คุณ" for address.

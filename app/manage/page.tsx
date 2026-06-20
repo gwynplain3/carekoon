@@ -13,6 +13,10 @@ import WaterWidget from '@/components/home/WaterWidget'
 import GroceryWidget from '@/components/home/GroceryWidget'
 import TodoWidget from '@/components/home/TodoWidget'
 import DiaryBlogWidget from '@/components/home/DiaryBlogWidget'
+import WeeklyProgressWidget from '@/components/health/WeeklyProgressWidget'
+import PhotoUpload from '@/components/manage/PhotoUpload'
+import AlertsBanner from '@/components/manage/AlertsBanner'
+import CalorieWidget from '@/components/home/CalorieWidget'
 import { compressImage } from '@/lib/avatar'
 import {
   Settings, User, Minus, Plus, LogOut, Loader2, 
@@ -21,6 +25,7 @@ import {
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
+const STROKE_WIDTH = 2.5
 export default function ManagementPage() {
   const { user, profile, logout, loading } = useUser()
   const router = useRouter()
@@ -177,6 +182,7 @@ export default function ManagementPage() {
     <LayoutTransition>
       <SideNav />
       <div className="main-wrapper">
+        <AlertsBanner caretakerId={user?.id || ''} />
         {/* Management Header */}
         <header style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -188,11 +194,11 @@ export default function ManagementPage() {
           </div>
 
           <div style={{ display: 'flex', gap: '12px' }}>
-            <button className="btn-large" onClick={() => setShowElderListModal(true)} style={{ background: 'var(--primary-light)', color: 'var(--primary-dark)', border: 'none', padding: '0 20px', height: '52px', fontSize: '1rem' }}>
-              <Search size={20} /> เลือกผู้สูงอายุ
+            <button className="btn-large" onClick={() => setShowElderListModal(true)} style={{ background: 'var(--primary-light)', color: 'var(--primary-dark)', border: 'none', padding: '0 24px' }}>
+              <Search size={24} strokeWidth={STROKE_WIDTH} /> <span>เลือกผู้สูงอายุ</span>
             </button>
-            <button className="btn-large" onClick={() => setShowAddElderModal(true)} style={{ background: 'var(--primary)', color: 'white', padding: '0 20px', height: '52px', fontSize: '1rem' }}>
-              <Plus size={20} /> เพิ่มคนใหม่
+            <button className="btn-large" onClick={() => setShowAddElderModal(true)} style={{ background: 'var(--primary)', color: 'white', padding: '0 24px' }}>
+              <Plus size={24} strokeWidth={STROKE_WIDTH} /> <span>เพิ่มคนใหม่</span>
             </button>
           </div>
         </header>
@@ -208,44 +214,52 @@ export default function ManagementPage() {
                     </div>
                     <div>
                       <h2 style={{ margin: 0 }}>{selectedElder.display_name}</h2>
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                         <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{selectedElder.type === 'virtual' ? `ID: ${selectedElder.login_code}` : 'อีเมลลการเชื่อมต่อ'}</span>
-                         <button onClick={() => { if (confirm('ลบผู้สูงอายุ?')) deleteElder(selectedElder.type === 'virtual' ? selectedElder.id : selectedElder.link_id, selectedElder.type === 'virtual'); }} style={{ background: 'none', border: 'none', color: 'var(--danger)', cursor: 'pointer', padding: 0 }}><Trash2 size={14} /></button>
+                     <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                         <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{selectedElder.type === 'virtual' ? `รหัสเข้าใช้งาน: ${selectedElder.login_code}` : 'อีเมลลการเชื่อมต่อ'}</span>
+                         <button onClick={() => { if (confirm('ลบผู้สูงอายุ?')) deleteElder(selectedElder.type === 'virtual' ? selectedElder.id : selectedElder.link_id, selectedElder.type === 'virtual'); }} style={{ background: 'none', border: 'none', color: 'var(--danger)', cursor: 'pointer', padding: '4px' }}><Trash2 size={24} strokeWidth={STROKE_WIDTH} /></button>
                       </div>
                     </div>
                  </div>
                   <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <button 
-                      onClick={() => toggleLock(selectedElder.id, selectedElder.type, selectedElder.is_profile_locked)}
-                      className="btn-large" 
-                      style={{ 
-                        height: '40px', 
-                        background: selectedElder.is_profile_locked ? '#fee2e2' : 'var(--surface)', 
-                        color: selectedElder.is_profile_locked ? 'var(--danger)' : 'var(--text)',
-                        border: selectedElder.is_profile_locked ? '1px solid #ef4444' : '1px solid var(--border)',
-                        padding: '0 16px',
-                        fontSize: '0.9rem'
-                      }}
-                    >
-                      {selectedElder.is_profile_locked ? <Lock size={16} /> : <Unlock size={16} />}
-                      {selectedElder.is_profile_locked ? 'ล็อคอยู่ (Elder แก้ไม่ได้)' : 'ล็อคโปรไฟล์'}
-                    </button>
+                      <button 
+                        onClick={() => toggleLock(selectedElder.id, selectedElder.type, selectedElder.is_profile_locked)}
+                        className="btn-large" 
+                        style={{ 
+                          background: selectedElder.is_profile_locked ? '#fee2e2' : 'var(--surface)', 
+                          color: selectedElder.is_profile_locked ? 'var(--danger)' : 'var(--text)',
+                          border: selectedElder.is_profile_locked ? '1px solid #ef4444' : '1px solid var(--border)',
+                          padding: '0 20px',
+                          fontSize: '1rem'
+                        }}
+                      >
+                        {selectedElder.is_profile_locked ? <Lock size={20} strokeWidth={STROKE_WIDTH} /> : <Unlock size={20} strokeWidth={STROKE_WIDTH} />}
+                        {selectedElder.is_profile_locked ? 'ล็อคอยู่ (Elder แก้ไม่ได้)' : 'ล็อคโปรไฟล์'}
+                      </button>
 
-                    <label className="btn-large" style={{ height: '40px', background: 'var(--surface)', fontSize: '0.9rem', padding: '0 16px', cursor: 'pointer', border: '1px solid var(--border)' }}>
-                       {uploading ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} />}
-                       {uploading ? 'กำลังอัปโหลด...' : 'เปลี่ยนรูป'}
-                       <input type="file" hidden accept="image/*" onChange={e => handleAvatarChange(e, selectedElder.id, selectedElder.type)} disabled={uploading} />
-                    </label>
+                      <label className="btn-large" style={{ background: 'var(--surface)', fontSize: '1rem', padding: '0 20px', cursor: 'pointer', border: '1px solid var(--border)' }}>
+                         {uploading ? <Loader2 size={24} strokeWidth={STROKE_WIDTH} className="animate-spin" /> : <Camera size={24} strokeWidth={STROKE_WIDTH} />}
+                         {uploading ? 'กำลังอัปโหลด...' : 'เปลี่ยนรูป'}
+                         <input type="file" hidden accept="image/*" onChange={e => handleAvatarChange(e, selectedElder.id, selectedElder.type)} disabled={uploading} />
+                      </label>
                  </div>
               </div>
 
-              {/* Bento Grid layout */}
+               {/* Bento Grid layout */}
               <div className="caretaker-grid">
                 <div className="bento-card-wide">
-                  <MedicineWidget userId={selectedElder.id} targetType={selectedElder.type} />
+                   <WeeklyProgressWidget userId={selectedElder.id} targetType={selectedElder.type} />
+                </div>
+                 <div className="bento-card-wide">
+                   <MedicineWidget userId={selectedElder.id} targetType={selectedElder.type} />
+                </div>
+                <div className="bento-card">
+                   <CalorieWidget userId={selectedElder.id} targetType={selectedElder.type} readOnly />
                 </div>
                 <div className="bento-card">
                    <WaterWidget userId={selectedElder.id} targetType={selectedElder.type} />
+                </div>
+                <div className="bento-card">
+                   <PhotoUpload userId={selectedElder.id} targetType={selectedElder.type} />
                 </div>
                 <div className="bento-card-large">
                    <TodoWidget userId={selectedElder.id} targetType={selectedElder.type} />
