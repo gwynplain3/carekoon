@@ -116,7 +116,7 @@ export default function TodoWidget({ userId, targetType, readOnly = false }: { u
         )}
       </div>
 
-      <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px' }}>
+      <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '16px' }}>
         <AnimatePresence>
           {showAdd && (
             <motion.form 
@@ -158,7 +158,7 @@ export default function TodoWidget({ userId, targetType, readOnly = false }: { u
           ) : (
             todos.map(todo => (
               <div key={todo.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: todo.is_recurring ? '#f0fdf4' : '#f8fafc', borderRadius: '12px', border: todo.is_recurring ? '1px solid var(--primary-light)' : '1px solid #f1f5f9' }}>
-                <button onClick={() => !effectiveReadOnly && toggleTodo(todo)} style={{ background: 'none', border: 'none', cursor: effectiveReadOnly ? 'default' : 'pointer', padding: 0 }}>
+                <button onClick={() => toggleTodo(todo)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>
                   <CheckCircle2 size={24} color={todo.is_done ? 'var(--primary)' : 'var(--border)'} />
                 </button>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>

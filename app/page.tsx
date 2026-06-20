@@ -183,12 +183,12 @@ export default function Home() {
             <FamilyPhotoFrame userId={targetId} targetType={targetType} />
             <WeeklyProgressWidget userId={targetId} targetType={targetType} />
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <MedicineWidget userId={targetId} targetType={targetType} />
               <CalorieWidget userId={targetId} targetType={targetType} />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                <TodoWidget userId={targetId} targetType={targetType} />
                <WaterWidget userId={targetId} targetType={targetType} />
                <GroceryWidget userId={targetId} targetType={targetType} />

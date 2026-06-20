@@ -65,7 +65,7 @@ export default function WaterWidget({ userId, targetType = 'real', readOnly = fa
 
   return (
     <section style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
         <div style={{ backgroundColor: '#0EA5E9', padding: '10px', borderRadius: '12px' }}>
           <Droplets size={24} color="white" />
         </div>
@@ -83,10 +83,10 @@ export default function WaterWidget({ userId, targetType = 'real', readOnly = fa
               )}
 
               <div style={{ textAlign: 'center', flex: 1 }}>
-                <div style={{ fontSize: effectiveReadOnly ? '3.5rem' : '5rem', fontWeight: '900', color: done ? '#0369a1' : '#1e293b', lineHeight: 1 }}>
+                <div style={{ fontSize: effectiveReadOnly ? '2.5rem' : '3.5rem', fontWeight: '900', color: done ? '#0369a1' : '#1e293b', lineHeight: 1 }}>
                   {glasses}
                 </div>
-                <div style={{ fontSize: '1rem', color: '#64748b' }}>/ {GOAL} แก้ว</div>
+                <div style={{ fontSize: '0.9rem', color: '#64748b' }}>/ {GOAL} แก้ว</div>
               </div>
 
               {(true) && (

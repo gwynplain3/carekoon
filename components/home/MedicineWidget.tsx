@@ -310,7 +310,7 @@ export default function MedicineWidget({ userId, targetType = 'real', readOnly =
                 key={med.id} 
                 className="card"
                 style={{ 
-                  padding: '18px 22px', 
+                  padding: '14px 20px', 
                   position: 'relative',
                   overflow: 'hidden'
                 }}
@@ -324,7 +324,7 @@ export default function MedicineWidget({ userId, targetType = 'real', readOnly =
                         {med.is_recurring ? 'ทานทุกวัน' : 'ทานเฉพาะวันนี้'}
                       </span>
                     </div>
-                    <div style={{ fontSize: '0.95rem', color: '#64748b', fontWeight: '600', marginTop: '2px' }}>
+                    <div style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: '600', marginTop: '1px' }}>
                       ทานไปแล้ว {eaten} / {total} ครั้ง
                     </div>
                   </div>
@@ -413,9 +413,9 @@ export default function MedicineWidget({ userId, targetType = 'real', readOnly =
                         whileTap={{ scale: 0.95 }}
                         onClick={() => handleEat(med)}
                         style={{ 
-                          width: '100%', height: '52px', background: 'var(--primary)', color: 'white', borderRadius: '14px', 
-                          border: 'none', fontSize: '1.2rem', fontWeight: '900', cursor: 'pointer',
-                          boxShadow: '0 4px 14px rgba(37, 99, 235, 0.25)',
+                          width: '100%', height: '48px', background: 'var(--primary)', color: 'white', borderRadius: '14px', 
+                          border: 'none', fontSize: '1.1rem', fontWeight: '900', cursor: 'pointer',
+                          boxShadow: '0 4px 12px rgba(37, 99, 235, 0.2)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px'
                         }}
                       >

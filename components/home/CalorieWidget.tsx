@@ -67,8 +67,8 @@ export default function CalorieWidget({ userId, targetType = 'real', readOnly = 
   const pct = Math.min(100, Math.round((calories / DAILY_GOAL) * 100))
 
   return (
-    <div className="card" style={{ padding: '24px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+    <div className="card" style={{ padding: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ background: 'var(--primary)', padding: '10px', borderRadius: '16px', color: 'white' }}>
             <Apple size={26} strokeWidth={STROKE_WIDTH} />
@@ -85,12 +85,12 @@ export default function CalorieWidget({ userId, targetType = 'real', readOnly = 
         )}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', marginBottom: '12px' }}>
-        <span style={{ fontSize: '3rem', fontWeight: '900', color: 'var(--primary)', lineHeight: 1 }}>{calories}</span>
-        <span style={{ fontSize: '1.1rem', color: 'var(--text-muted)', fontWeight: 'bold', paddingBottom: '4px' }}>/ {DAILY_GOAL} kcal</span>
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px', marginBottom: '10px' }}>
+        <span style={{ fontSize: '2.2rem', fontWeight: '900', color: 'var(--primary)', lineHeight: 1 }}>{calories}</span>
+        <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 'bold' }}>/ {DAILY_GOAL} kcal</span>
       </div>
 
-      <div style={{ height: '16px', background: 'var(--border)', borderRadius: '10px', overflow: 'hidden', marginBottom: '28px' }}>
+      <div style={{ height: '14px', background: 'var(--border)', borderRadius: '10px', overflow: 'hidden', marginBottom: '20px' }}>
         <motion.div 
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
