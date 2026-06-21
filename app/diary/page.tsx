@@ -140,23 +140,39 @@ export default function DiaryPage() {
                      <p style={{ color: 'var(--text-muted)', fontSize: '1.4rem' }}>เริ่มต้นเขียนบันทึกเล่มนี้ด้วยเรื่องราวแรกของคุณ</p>
                   </div>
                 ) : (
-                  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '40px', paddingLeft: '32px' }}>
-                     <div style={{ position: 'absolute', left: '0', top: '20px', bottom: '20px', width: '6px', background: 'linear-gradient(to bottom, var(--primary) 0%, #e2e8f0 100%)', borderRadius: '10px' }} />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
                      
                      {diaries.map((diary, idx) => {
                        const moodData = moodIcons[diary.mood] || moodIcons['ปกติ']
                        const date = new Date(diary.entry_date)
                        return (
-                        <motion.div key={diary.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.1 }} className="card" style={{ padding: '40px', borderRadius: '48px', position: 'relative', border: '1px solid rgba(0,0,0,0.05)', display: 'flex', gap: '32px', background: '#fff', overflow: 'hidden' }}>
-                           <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '12px', background: moodData.color }} />
-                           <div style={{ position: 'absolute', left: '-40px', top: '40px', width: '24px', height: '24px', borderRadius: '50%', background: moodData.color, border: '6px solid white', boxShadow: '0 4px 10px rgba(0,0,0,0.1)', zIndex: 10 }} />
+                        <motion.div 
+                          key={diary.id} 
+                          initial={{ opacity: 0, y: 30 }} 
+                          animate={{ opacity: 1, y: 0 }} 
+                          transition={{ delay: idx * 0.1 }} 
+                          className="card" 
+                          style={{ 
+                            padding: '40px', 
+                            borderRadius: '40px', 
+                            position: 'relative', 
+                            border: '1px solid rgba(0,0,0,0.04)', 
+                            display: 'flex', 
+                            flexDirection: 'column',
+                            gap: '24px', 
+                            background: '#fff', 
+                            overflow: 'hidden',
+                            boxShadow: '0 15px 45px rgba(0,0,0,0.03)'
+                          }}
+                        >
+                           <div style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '8px', background: moodData.color, opacity: 0.8 }} />
                            
                            <div style={{ flex: 1 }}>
                              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: '32px', alignItems: 'flex-start', gap: '20px' }}>
                                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                                 <div style={{ textAlign: 'center', background: '#f8fafc', padding: '12px 20px', borderRadius: '24px', minWidth: '100px' }}>
-                                    <div style={{ fontSize: '2rem', fontWeight: '900', color: 'var(--primary)' }}>{date.getDate()}</div>
-                                    <div style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--text-muted)', textTransform: 'uppercase' }}>{date.toLocaleDateString('th-TH', { month: 'short' })}</div>
+                                 <div style={{ textAlign: 'center', background: 'var(--primary-light)', padding: '12px 20px', borderRadius: '24px', minWidth: '100px', border: '1px solid var(--primary-border)' }}>
+                                    <div style={{ fontSize: '2.2rem', fontWeight: '900', color: 'var(--primary-dark)', lineHeight: '1.2' }}>{date.getDate()}</div>
+                                    <div style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--primary)', textTransform: 'uppercase' }}>{date.toLocaleDateString('th-TH', { month: 'short' })}</div>
                                  </div>
                                  <div>
                                    <div style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-muted)' }}>{date.toLocaleDateString('th-TH', { weekday: 'long' })}</div>
