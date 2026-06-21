@@ -21,11 +21,17 @@ export default function NotificationBanner({ userId, targetType = 'real' }: { us
   const [soundEnabled, setSoundEnabled] = useState(false)
 
   // Audio Synthesizer for 100% reliability (No Network Needed)
-  const playPing = () => {
-    if (!soundEnabled) return
+  const playPing = async () => {
+    // Note: Do NOT check soundEnabled here for the initial test click
     try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext
+      const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext
       const ctx = new AudioCtx()
+      
+      // Resume context (Crucial for Chrome)
+      if (ctx.state === 'suspended') {
+        await ctx.resume()
+      }
+
       const osc = ctx.createOscillator()
       const gain = ctx.createGain()
       
@@ -34,13 +40,25 @@ export default function NotificationBanner({ userId, targetType = 'real' }: { us
       
       osc.type = 'sine'
       osc.frequency.setValueAtTime(880, ctx.currentTime) // High Pitch A5
-      gain.gain.setValueAtTime(0.4, ctx.currentTime)
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4)
+      gain.gain.setValueAtTime(0.5, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8)
       
       osc.start()
-      osc.stop(ctx.currentTime + 0.4)
+      osc.stop(ctx.currentTime + 0.8)
+      return true
     } catch (e) {
       console.error('Audio synthesis failed', e)
+      return false
+    }
+  }
+
+  const handleEnableSound = async () => {
+    const worked = await playPing()
+    if (worked) {
+      setSoundEnabled(true)
+      alert('ระบบเสียงเปิดใช้งานแล้วครับ! คุณจะได้ยินเสียง "ปี๊บ" เมื่อครู่ หากไม่ได้ยิน โปรดเช็คปุ่มเพิ่มเสียงที่เครื่องของคุณด้วยนะครับ')
+    } else {
+      alert('ไม่สามารถเปิดระบบเสียงได้ โปรดลองอีกครั้งหรือใช้เบราว์เซอร์อื่นครับ')
     }
   }
 
@@ -170,10 +188,10 @@ export default function NotificationBanner({ userId, targetType = 'real' }: { us
     <div style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {!soundEnabled ? (
         <button 
-          onClick={() => { setSoundEnabled(true); playPing(); }}
+          onClick={handleEnableSound}
           style={{ width: '100%', padding: '16px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '20px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)', fontSize: '1.2rem' }}
         >
-          🔊 คลิกปุ่มนี้เพื่อเปิดระบบเสียง (ระบบจะทดสอบเสียงทันที)
+          🔊 คลิกปุ่มนี้เพื่อเริ่มระบบเสียง (เบราว์เซอร์จะขออนุญาตผ่านการคลิก)
         </button>
       ) : (
         <div style={{ textAlign: 'right', fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 'bold' }}>📡 ระบบแจ้งเตือนทำงานแบบ Real-time</div>

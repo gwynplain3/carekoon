@@ -11,30 +11,39 @@ export default function AlertsBanner({ caretakerId }: { caretakerId: string }) {
   const [soundEnabled, setSoundEnabled] = useState(false)
 
   // Audio Synthesizer for SOS
-  const playSirene = () => {
-    if (!soundEnabled) return
+  const playSirene = async () => {
     try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext
+      const AudioCtx = (window as any).AudioContext || (window as any).webkitAudioContext
       const ctx = new AudioCtx()
+      if (ctx.state === 'suspended') await ctx.resume()
       
       // Repeating dual-tone siren
-      for (let i = 0; i < 3; i++) {
-        const time = ctx.currentTime + i * 0.6
+      for (let i = 0; i < 4; i++) {
+        const time = ctx.currentTime + i * 0.5
         const osc = ctx.createOscillator()
         const gain = ctx.createGain()
         osc.connect(gain)
         gain.connect(ctx.destination)
         
-        osc.frequency.setValueAtTime(660, time)
-        osc.frequency.exponentialRampToValueAtTime(880, time + 0.3)
-        gain.gain.setValueAtTime(0.3, time)
-        gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5)
+        osc.frequency.setValueAtTime(i % 2 === 0 ? 660 : 880, time)
+        gain.gain.setValueAtTime(0.4, time)
+        gain.gain.exponentialRampToValueAtTime(0.01, time + 0.4)
         
         osc.start(time)
-        osc.stop(time + 0.5)
+        osc.stop(time + 0.45)
       }
+      return true
     } catch (e) {
       console.error('Siren synthesis failed', e)
+      return false
+    }
+  }
+
+  const handleEnableSound = async () => {
+    const worked = await playSirene()
+    if (worked) {
+      setSoundEnabled(true)
+      alert('เปิดระบบเสียงฉุกเฉินแล้ว! หากคุณได้ยินเสียงไซเรนเมื่อครู่ แสดงว่าระบบพร้อมทำงานแล้วครับ')
     }
   }
 
@@ -92,14 +101,10 @@ export default function AlertsBanner({ caretakerId }: { caretakerId: string }) {
     <div style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {!soundEnabled && (
         <button 
-          onClick={() => {
-            setSoundEnabled(true);
-            // We need a slight delay or direct call to unlock the hardware
-            setTimeout(playSirene, 50);
-          }}
+          onClick={handleEnableSound}
           style={{ width: '100%', padding: '16px', background: '#ea580c', color: 'white', border: 'none', borderRadius: '16px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 8px 20px rgba(234, 88, 12, 0.3)', fontSize: '1.2rem' }}
         >
-          🚨 คลิกเปิดระบบเสียงฉุกเฉิน (ทดสอบไซเรนทันที)
+          🚨 คลิกเปิดระบบเสียงฉุกเฉิน (ทดสอบไซเรนด่วน)
         </button>
       )}
       <AnimatePresence>
