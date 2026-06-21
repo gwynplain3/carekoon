@@ -48,6 +48,19 @@ export default function MedicineWidget({ userId, targetType = 'real', readOnly =
   useEffect(() => {
     if (userId) {
       fetchMedicines()
+
+      // Realtime subscription for medicine table
+      const channel = supabase
+        .channel(`medicine-updates-${userId}`)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'medicines' }, (payload) => {
+          console.log('Realtime med update:', payload)
+          fetchMedicines() // simpler to refetch to ensure order and state
+        })
+        .subscribe()
+
+      return () => {
+        supabase.removeChannel(channel)
+      }
     }
   }, [userId])
 

@@ -41,6 +41,18 @@ export default function AppointmentWidget({ userId, targetType, readOnly = false
 
   useEffect(() => {
     fetchAppointments()
+
+    const channel = supabase
+      .channel(`appointment-updates-${userId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'appointments' }, (payload) => {
+        console.log('Realtime appt update:', payload)
+        fetchAppointments()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [userId, targetType])
 
   async function fetchAppointments() {

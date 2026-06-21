@@ -19,15 +19,38 @@ export default function NotificationBanner({ userId, targetType = 'real' }: { us
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [dismissed, setDismissed] = useState<string[]>([])
 
+  // Audio for notifications
+  const playPing = () => {
+    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3')
+    audio.play().catch(e => console.log('Sound blocked by browser policy until user interaction'))
+  }
+
   useEffect(() => {
     if (userId) {
       checkNotifications()
-      const interval = setInterval(checkNotifications, 60000) // Check every minute
-      return () => clearInterval(interval)
+      
+      // Realtime subscription
+      const channel = supabase
+        .channel('elder-notifications')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'medicines' }, (payload) => {
+          console.log('Med change detected', payload)
+          checkNotifications(true) // Pass true to play sound only on new items
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'appointments' }, (payload) => {
+          console.log('Appt change detected', payload)
+          checkNotifications(true)
+        })
+        .subscribe()
+
+      const interval = setInterval(checkNotifications, 30000)
+      return () => {
+        clearInterval(interval)
+        supabase.removeChannel(channel)
+      }
     }
   }, [userId, targetType, dismissed])
 
-  async function checkNotifications() {
+  async function checkNotifications(shouldPlaySound = false) {
     const list: Notification[] = []
     const now = new Date()
     const currentTime = now.getHours() * 60 + now.getMinutes()
@@ -107,7 +130,14 @@ export default function NotificationBanner({ userId, targetType = 'real' }: { us
       }
     } catch (err) { console.error(err) }
 
-    setNotifications(list.sort((a, b) => (a.priority === 'high' ? -1 : 1)))
+    const sortedList = list.sort((a, b) => (a.priority === 'high' ? -1 : 1))
+    
+    // Play sound if we found something new and sound is requested
+    if (shouldPlaySound && list.length > notifications.length) {
+      playPing()
+    }
+
+    setNotifications(sortedList)
   }
 
   function handleDismiss(id: string) {

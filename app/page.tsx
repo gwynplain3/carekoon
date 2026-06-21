@@ -66,7 +66,22 @@ export default function Home() {
   const [broadcasts, setBroadcasts] = useState<any[]>([])
 
   useEffect(() => {
-    if (targetId) fetchActiveBroadcasts()
+    if (targetId) {
+      fetchActiveBroadcasts()
+
+      // Realtime subscription for broadcasts
+      const channel = supabase
+        .channel(`broadcasts-updates-${targetId}`)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'broadcasts' }, (payload) => {
+          console.log('Realtime broadcast update:', payload)
+          fetchActiveBroadcasts()
+        })
+        .subscribe()
+
+      return () => {
+        supabase.removeChannel(channel)
+      }
+    }
   }, [targetId, targetType])
 
   async function fetchActiveBroadcasts() {
