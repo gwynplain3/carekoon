@@ -26,18 +26,18 @@ export default function WaterWidget({ userId, targetType = 'real', readOnly = fa
       } else {
         query = query.eq('user_id', userId)
       }
-      const { data, error } = await query.eq('log_date', today).single()
-      
-      if (data) {
-        setGlasses(data.glasses)
-      } else {
-        setGlasses(0)
-        // If it doesn't exist and we are the elder, we could auto-create it on first drink.
-        // But for display, 0 is fine.
-      }
+      const { data } = await query.eq('log_date', today).single()
+      setGlasses(data?.glasses || 0)
       setLoading(false)
     }
-    if (userId) fetch()
+
+    if (userId) {
+      fetch()
+      const channel = supabase.channel(`water-updates-${userId}`)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'water_logs' }, fetch)
+        .subscribe()
+      return () => { supabase.removeChannel(channel) }
+    }
   }, [userId, targetType, today])
 
   async function update(next: number) {

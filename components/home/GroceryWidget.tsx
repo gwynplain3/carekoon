@@ -15,14 +15,30 @@ export default function GroceryWidget({ userId, targetType = 'real', readOnly = 
   const [newItem, setNewItem] = useState('')
   const [showInput, setShowInput] = useState(false)
 
-  useEffect(() => {
+  async function fetchItems() {
     let query = supabase.from('grocery_items').select('id, item, is_checked')
     if (targetType === 'virtual') {
       query = query.eq('virtual_elder_id', userId)
     } else {
       query = query.eq('user_id', userId)
     }
-    query.order('created_at').then(({ data }) => setItems(data ?? []))
+    const { data } = await query.order('created_at')
+    setItems(data ?? [])
+  }
+
+  useEffect(() => {
+    if (userId) {
+      fetchItems()
+      const channel = supabase.channel(`grocery-updates-${userId}`)
+        .on('postgres_changes', { 
+          event: '*', 
+          schema: 'public', 
+          table: 'grocery_items',
+          filter: targetType === 'virtual' ? `virtual_elder_id=eq.${userId}` : `user_id=eq.${userId}`
+        }, fetchItems)
+        .subscribe()
+      return () => { supabase.removeChannel(channel) }
+    }
   }, [userId, targetType])
 
   async function add() {

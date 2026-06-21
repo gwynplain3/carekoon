@@ -25,10 +25,6 @@ export default function TodoWidget({ userId, targetType, readOnly = false }: { u
   const [saving, setSaving] = useState(false)
   const [showAdd, setShowAdd] = useState(false)
 
-  useEffect(() => {
-    fetchTodos()
-  }, [userId, targetType])
-
   async function fetchTodos() {
     setLoading(true)
     let query = supabase.from('todos').select('*')
@@ -61,6 +57,16 @@ export default function TodoWidget({ userId, targetType, readOnly = false }: { u
     setTodos(processed)
     setLoading(false)
   }
+
+  useEffect(() => {
+    if (userId) {
+      fetchTodos()
+      const channel = supabase.channel(`todo-updates-${userId}`)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'todos' }, fetchTodos)
+        .subscribe()
+      return () => { supabase.removeChannel(channel) }
+    }
+  }, [userId, targetType])
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault()

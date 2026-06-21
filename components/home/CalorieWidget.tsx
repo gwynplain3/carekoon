@@ -20,10 +20,6 @@ export default function CalorieWidget({ userId, targetType = 'real', readOnly = 
 
   const today = new Date().toISOString().split('T')[0]
 
-  useEffect(() => {
-    if (userId) fetchLogs()
-  }, [userId, targetType, today])
-
   async function fetchLogs() {
     setLoading(true)
     let query = supabase.from('meal_logs').select('*').eq('log_date', today)
@@ -36,6 +32,16 @@ export default function CalorieWidget({ userId, targetType = 'real', readOnly = 
     setLogs(data || [])
     setLoading(false)
   }
+
+  useEffect(() => {
+    if (userId) {
+      fetchLogs()
+      const channel = supabase.channel(`meal-updates-${userId}`)
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'meal_logs' }, fetchLogs)
+        .subscribe()
+      return () => { supabase.removeChannel(channel) }
+    }
+  }, [userId, targetType, today])
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault()

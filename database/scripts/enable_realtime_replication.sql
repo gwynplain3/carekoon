@@ -17,9 +17,17 @@ ALTER PUBLICATION supabase_realtime ADD TABLE alerts;
 ALTER PUBLICATION supabase_realtime ADD TABLE broadcasts;
 ALTER PUBLICATION supabase_realtime ADD TABLE profiles;
 ALTER PUBLICATION supabase_realtime ADD TABLE virtual_elders;
+ALTER PUBLICATION supabase_realtime ADD TABLE water_logs;
+ALTER PUBLICATION supabase_realtime ADD TABLE meal_logs;
+ALTER PUBLICATION supabase_realtime ADD TABLE todos;
+ALTER PUBLICATION supabase_realtime ADD TABLE grocery_items;
 
 -- 3. Ensure REPLICA IDENTITY is set to FULL for precise updates
 ALTER TABLE medicines REPLICA IDENTITY FULL;
 ALTER TABLE appointments REPLICA IDENTITY FULL;
 ALTER TABLE alerts REPLICA IDENTITY FULL;
 ALTER TABLE broadcasts REPLICA IDENTITY FULL;
+ALTER TABLE water_logs REPLICA IDENTITY FULL;
+ALTER TABLE meal_logs REPLICA IDENTITY FULL;
+ALTER TABLE todos REPLICA IDENTITY FULL;
+ALTER TABLE grocery_items REPLICA IDENTITY FULL;

@@ -22,9 +22,11 @@ export default function NotificationBanner({ userId, targetType = 'real' }: { us
 
   // Audio for notifications
   const playPing = () => {
-    if (!soundEnabled) return
-    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3')
-    audio.play().catch(e => console.log('Sound blocked'))
+    try {
+      const audio = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_783332483a.mp3')
+      audio.volume = 0.8
+      audio.play().catch(e => console.log('Audio Blocked:', e))
+    } catch (err) { console.error(err) }
   }
 
   useEffect(() => {
@@ -38,6 +40,10 @@ export default function NotificationBanner({ userId, targetType = 'real' }: { us
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'medicines' }, () => checkNotifications(false))
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'appointments' }, (p) => checkNotifications(true))
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'appointments' }, () => checkNotifications(false))
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'water_logs' }, () => checkNotifications(false))
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'calorie_logs' }, () => checkNotifications(false))
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'todos' }, () => checkNotifications(false))
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'grocery_list' }, () => checkNotifications(false))
         .subscribe()
 
       const interval = setInterval(checkNotifications, 30000)
@@ -147,13 +153,15 @@ export default function NotificationBanner({ userId, targetType = 'real' }: { us
 
   return (
     <div style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {!soundEnabled && (
+      {!soundEnabled ? (
         <button 
-          onClick={() => setSoundEnabled(true)}
-          style={{ width: '100%', padding: '12px', background: 'var(--primary-light)', border: '1px dashed var(--primary)', borderRadius: '16px', color: 'var(--primary-dark)', fontWeight: 'bold', cursor: 'pointer' }}
+          onClick={() => { setSoundEnabled(true); playPing(); }}
+          style={{ width: '100%', padding: '16px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '20px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)', fontSize: '1.2rem' }}
         >
-          🔔 คลิกตรงนี้หนึ่งครั้ง เพื่อเปิดระบบเสียงแจ้งเตือนอัตโนมัติครับ
+          🔊 คลิกปุ่มนี้เพื่อเปิดระบบเสียง (ระบบจะทดสอบเสียงทันที)
         </button>
+      ) : (
+        <div style={{ textAlign: 'right', fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 'bold' }}>📡 ระบบแจ้งเตือนทำงานแบบ Real-time</div>
       )}
       <AnimatePresence>
         {notifications.map((notif) => (
