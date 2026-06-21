@@ -187,9 +187,7 @@ export default function Home() {
           <div style={{ 
             display: 'flex',
             flexDirection: 'column',
-            gap: '32px',
-            maxWidth: '900px',
-            margin: '0 auto'
+            gap: '32px'
           }}>
             <SOSButton userId={targetId} targetType={targetType} />
             <FamilyPhotoFrame userId={targetId} targetType={targetType} />
