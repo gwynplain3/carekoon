@@ -185,49 +185,29 @@ export default function Home() {
         {/* Dashboard Widgets Container */}
         {targetId && (
           <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
-            gap: '32px' 
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '32px',
+            maxWidth: '900px',
+            margin: '0 auto'
           }}>
-            <div style={{ gridColumn: '1 / -1' }}>
-              <SOSButton userId={targetId} targetType={targetType} />
-            </div>
+            <SOSButton userId={targetId} targetType={targetType} />
+            <FamilyPhotoFrame userId={targetId} targetType={targetType} />
+            <WeeklyProgressWidget userId={targetId} targetType={targetType} />
+            <AppointmentWidget userId={targetId} targetType={targetType} isSelfCare={profile?.role === 'elder_self'} />
+            <MedicineWidget userId={targetId} targetType={targetType} />
             
-            <div style={{ gridColumn: '1 / -1' }}>
-              <FamilyPhotoFrame userId={targetId} targetType={targetType} />
-            </div>
-
-            <div style={{ gridColumn: '1 / -1' }}>
-              <WeeklyProgressWidget userId={targetId} targetType={targetType} />
-            </div>
-            
-            <div style={{ gridRow: 'span 2' }}>
-              <AppointmentWidget userId={targetId} targetType={targetType} isSelfCare={profile?.role === 'elder_self'} />
-            </div>
-            
-            <div style={{ gridRow: 'span 2' }}>
-              <MedicineWidget userId={targetId} targetType={targetType} />
-            </div>
-            
-            <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
               <CalorieWidget userId={targetId} targetType={targetType} />
+              <TodoWidget userId={targetId} targetType={targetType} />
             </div>
 
-            <div style={{ gridRow: 'span 2' }}>
-               <TodoWidget userId={targetId} targetType={targetType} />
-            </div>
-
-            <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
                <WaterWidget userId={targetId} targetType={targetType} />
-            </div>
-
-            <div>
                <GroceryWidget userId={targetId} targetType={targetType} />
             </div>
 
-            <div style={{ gridColumn: '1 / -1' }}>
-              <DiaryBlogWidget userId={targetId} targetType={targetType} />
-            </div>
+            <DiaryBlogWidget userId={targetId} targetType={targetType} />
           </div>
         )}
       </div>

@@ -21,7 +21,7 @@ export default function SideNav() {
     { label: 'หน้าแรก', href: '/', icon: Home },
     { label: 'สมุดบันทึก', href: '/diary', icon: Book },
     { label: 'ชุมชนคนกันเอง', href: '/forum', icon: MessageSquare },
-    { label: 'สุขภาพ & นัดหมาย', href: '/health', icon: HeartPulse },
+    ...(profile?.role === 'elder_self' ? [{ label: 'สุขภาพ & นัดหมาย', href: '/health', icon: HeartPulse }] : []),
     { label: 'ตั้งค่า', href: '/settings', icon: Settings },
   ]
 
