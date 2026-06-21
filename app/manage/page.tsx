@@ -12,11 +12,11 @@ import MedicineWidget from '@/components/home/MedicineWidget'
 import WaterWidget from '@/components/home/WaterWidget'
 import GroceryWidget from '@/components/home/GroceryWidget'
 import TodoWidget from '@/components/home/TodoWidget'
-import DiaryBlogWidget from '@/components/home/DiaryBlogWidget'
 import WeeklyProgressWidget from '@/components/health/WeeklyProgressWidget'
 import PhotoUpload from '@/components/manage/PhotoUpload'
 import AlertsBanner from '@/components/manage/AlertsBanner'
 import CalorieWidget from '@/components/home/CalorieWidget'
+import AppointmentWidget from '@/components/home/AppointmentWidget'
 import { compressImage } from '@/lib/avatar'
 import {
   Settings, User, Minus, Plus, LogOut, Loader2, 
@@ -248,6 +248,9 @@ export default function ManagementPage() {
               <div className="caretaker-grid">
                 <div className="bento-card-wide">
                    <WeeklyProgressWidget userId={selectedElder.id} targetType={selectedElder.type} />
+                </div>
+                 <div className="bento-card-wide">
+                   <AppointmentWidget userId={selectedElder.id} targetType={selectedElder.type} />
                 </div>
                  <div className="bento-card-wide">
                    <MedicineWidget userId={selectedElder.id} targetType={selectedElder.type} />

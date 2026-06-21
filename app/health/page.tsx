@@ -6,12 +6,17 @@ import LayoutTransition from '@/components/layout/LayoutTransition'
 import HealthPage from '@/components/health/HealthPage'
 
 export default function HealthTab() {
-  const { user } = useUser()
+  const { user, profile, isVirtual, loading } = useUser()
+  const targetId = isVirtual ? profile?.id : user?.id
+  const targetType = isVirtual ? 'virtual' : 'real'
+
+  if (loading || !targetId) return null
+
   return (
     <LayoutTransition>
       <SideNav />
       <div className="main-wrapper">
-        {user && <HealthPage userId={user.id} />}
+        <HealthPage userId={targetId} targetType={targetType} />
       </div>
     </LayoutTransition>
   )

@@ -7,7 +7,7 @@ import Link from 'next/link'
 
 interface Log { id: number; log_date: string; bp_sys: number; bp_dia: number; blood_sugar: number; pulse: number }
 
-export default function HealthPage({ userId }: { userId: string }) {
+export default function HealthPage({ userId, targetType = 'real' }: { userId: string, targetType?: 'real' | 'virtual' }) {
   const [logs, setLogs] = useState<Log[]>([])
   const [appointments, setAppointments] = useState<any[]>([])
   const [showLogForm, setShowLogForm] = useState(false)
@@ -17,10 +17,18 @@ export default function HealthPage({ userId }: { userId: string }) {
 
   useEffect(() => {
     async function load() {
-      const [{ data: l }, { data: a }] = await Promise.all([
-        supabase.from('health_logs').select('*').eq('user_id', userId).order('log_date', { ascending: false }).limit(7),
-        supabase.from('appointments').select('*').eq('user_id', userId).gte('appt_date', new Date().toISOString().split('T')[0]).order('appt_date').limit(5)
-      ])
+      let logQuery = supabase.from('health_logs').select('*').order('log_date', { ascending: false }).limit(7)
+      let apptQuery = supabase.from('appointments').select('*').gte('appt_date', new Date().toISOString().split('T')[0]).order('appt_date').limit(5)
+
+      if (targetType === 'virtual') {
+        logQuery = logQuery.eq('virtual_elder_id', userId)
+        apptQuery = apptQuery.eq('virtual_elder_id', userId)
+      } else {
+        logQuery = logQuery.eq('user_id', userId)
+        apptQuery = apptQuery.eq('user_id', userId)
+      }
+
+      const [{ data: l }, { data: a }] = await Promise.all([logQuery, apptQuery])
       setLogs(l ?? [])
       setAppointments(a ?? [])
     }
@@ -30,14 +38,17 @@ export default function HealthPage({ userId }: { userId: string }) {
   async function saveLog(e: React.FormEvent) {
     e.preventDefault()
     const today = new Date().toISOString().split('T')[0]
-    const { data } = await supabase.from('health_logs').insert({
-      user_id: userId,
+    const payload: any = {
       log_date: today,
       bp_sys: Number(form.bp_sys) || null,
       bp_dia: Number(form.bp_dia) || null,
       blood_sugar: Number(form.blood_sugar) || null,
       pulse: Number(form.pulse) || null,
-    }).select('*').single()
+    }
+    if (targetType === 'virtual') payload.virtual_elder_id = userId
+    else payload.user_id = userId
+
+    const { data } = await supabase.from('health_logs').insert(payload).select('*').single()
     if (data) setLogs(p => [data, ...p])
     setForm({ bp_sys: '', bp_dia: '', blood_sugar: '', pulse: '' })
     setShowLogForm(false)
@@ -45,7 +56,11 @@ export default function HealthPage({ userId }: { userId: string }) {
 
   async function saveAppt(e: React.FormEvent) {
     e.preventDefault()
-    const { data } = await supabase.from('appointments').insert({ user_id: userId, ...apptForm }).select('*').single()
+    const payload: any = { ...apptForm }
+    if (targetType === 'virtual') payload.virtual_elder_id = userId
+    else payload.user_id = userId
+    
+    const { data } = await supabase.from('appointments').insert(payload).select('*').single()
     if (data) setAppointments(p => [...p, data].sort((a, b) => a.appt_date.localeCompare(b.appt_date)))
     setApptForm({ doctor_name: '', location: '', appt_date: '', appt_time: '', note: '' })
     setShowApptForm(false)

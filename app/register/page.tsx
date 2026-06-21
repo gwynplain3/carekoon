@@ -60,7 +60,9 @@ function RegisterForm() {
       if (profileError) {
         setPopup({ type: 'error', message: 'สร้างโปรไฟล์ไม่สำเร็จ: ' + profileError.message })
       } else {
-        setPopup({ type: 'success', message: 'ลงทะเบียนสำเร็จ! ยินดีต้อนรับครับ/ค่ะ' })
+        // Manually refresh profile so AuthGate doesn't redirect to setup-role
+        window.location.href = '/'
+        return 
       }
       setLoading(false)
     }

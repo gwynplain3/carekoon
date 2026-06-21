@@ -15,6 +15,7 @@ import WeeklyProgressWidget from '@/components/health/WeeklyProgressWidget'
 import SOSButton from '@/components/home/SOSButton'
 import FamilyPhotoFrame from '@/components/home/FamilyPhotoFrame'
 import CalorieWidget from '@/components/home/CalorieWidget'
+import AppointmentWidget from '@/components/home/AppointmentWidget'
 import Popup from '@/components/ui/Popup'
 import { 
   Plus, Loader2, ListTodo, Calendar, Clock, BookOpen, MessageSquare, ChevronRight, HeartPulse, Droplets, ShoppingCart, Users, Megaphone, Camera, User, Lock
@@ -129,16 +130,21 @@ export default function Home() {
       <SideNav />
       {popup && <Popup type={popup.type} message={popup.message} onClose={() => setPopup(null)} />}
       <div className="main-wrapper">
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px', paddingBottom: '24px', borderBottom: '2px solid var(--border)' }}>
-          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '48px', paddingBottom: '32px', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+            <div style={{ padding: '4px', borderRadius: '24px', background: 'var(--primary-light)' }}>
+              <div style={{ width: '80px', height: '80px', borderRadius: '20px', overflow: 'hidden', border: '3px solid white', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}>
+                {profile?.avatar_url ? <img src={profile.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ background: 'var(--primary)', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><User size={40} color="white" /></div>}
+              </div>
+            </div>
             <div>
-              <h1 style={{ margin: 0, fontSize: '2.2rem' }}>สวัสดีครับ, คุณ{profile?.display_name || 'ผู้ใช้งาน'}!</h1>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.4rem', margin: '6px 0 0 0' }}>วันนี้เป็นวันสุขภาพที่ดีครับ 🌿</p>
+              <h1 style={{ margin: 0, fontSize: '2.5rem', fontWeight: '900' }}>สวัสดีครับ, คุณ{profile?.display_name || 'ผู้ใช้งาน'}!</h1>
+              <p style={{ color: 'var(--text-muted)', fontSize: '1.4rem', margin: '4px 0 0 0' }}>วันนี้เป็นวัน健康ที่ดีครับ 🌿</p>
             </div>
           </div>
            <div style={{ textAlign: 'right' }}>
-             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--primary-dark)', fontWeight: 'bold', fontSize: '1.2rem' }}><Calendar size={28} strokeWidth={STROKE_WIDTH} /> {thaiDate}</div>
-             <div style={{ fontSize: '2.5rem', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'flex-end' }}><Clock size={40} strokeWidth={STROKE_WIDTH} color="var(--text-muted)" />{today.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}</div>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--primary-dark)', fontWeight: 'bold', fontSize: '1.2rem', justifyContent: 'flex-end' }}><Calendar size={28} strokeWidth={STROKE_WIDTH} /> {thaiDate}</div>
+             <div style={{ fontSize: '3rem', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'flex-end', color: 'var(--text)' }}><Clock size={40} strokeWidth={STROKE_WIDTH} color="var(--primary)" />{today.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}</div>
           </div>
         </header>
         
@@ -178,23 +184,71 @@ export default function Home() {
 
         {/* Dashboard Widgets Container */}
         {targetId && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
-            <SOSButton userId={targetId} targetType={targetType} />
-            <FamilyPhotoFrame userId={targetId} targetType={targetType} />
-            <WeeklyProgressWidget userId={targetId} targetType={targetType} />
+          <div className="elder-dashboard-grid">
+            <div className="bento-card-wide" style={{ gridColumn: 'span 2' }}>
+              <SOSButton userId={targetId} targetType={targetType} />
+            </div>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div className="bento-card-wide" style={{ gridColumn: 'span 2' }}>
+              <FamilyPhotoFrame userId={targetId} targetType={targetType} />
+            </div>
+
+            <div className="bento-card-wide" style={{ gridColumn: 'span 2' }}>
+              <WeeklyProgressWidget userId={targetId} targetType={targetType} />
+            </div>
+
+            <div className="bento-card-large">
+              <AppointmentWidget userId={targetId} targetType={targetType} />
+            </div>
+            
+            <div className="bento-card-large">
               <MedicineWidget userId={targetId} targetType={targetType} />
+            </div>
+            
+            <div className="bento-card">
               <CalorieWidget userId={targetId} targetType={targetType} />
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div className="bento-card-large">
                <TodoWidget userId={targetId} targetType={targetType} />
+            </div>
+
+            <div className="bento-card">
                <WaterWidget userId={targetId} targetType={targetType} />
+            </div>
+
+            <div className="bento-card">
                <GroceryWidget userId={targetId} targetType={targetType} />
+            </div>
+
+            <div className="bento-card-wide" style={{ gridColumn: 'span 2' }}>
+              <DiaryBlogWidget userId={targetId} targetType={targetType} />
             </div>
           </div>
         )}
+
+        <style jsx global>{`
+          .elder-dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+          }
+          .bento-card-wide {
+            grid-column: span 2;
+          }
+          .bento-card-large {
+            grid-column: span 1;
+            grid-row: span 2;
+          }
+          @media (max-width: 1024px) {
+            .elder-dashboard-grid {
+              grid-template-columns: 1fr;
+            }
+            .bento-card-wide, .bento-card-large {
+              grid-column: span 1 !important;
+            }
+          }
+        `}</style>
       </div>
     </LayoutTransition>
   )
