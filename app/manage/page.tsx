@@ -50,6 +50,13 @@ export default function ManagementPage() {
 
   // Current Active Elder
   const [selectedElder, setSelectedElder] = useState<any | null>(null)
+  
+  // Real-time Clock
+  const [currentTime, setCurrentTime] = useState(new Date())
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
 
   useEffect(() => {
     document.body.classList.add('caretaker-mode')
@@ -187,10 +194,15 @@ export default function ManagementPage() {
         <header style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'white', padding: '24px', borderRadius: '24px', border: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
              <div style={{ backgroundColor: 'var(--primary)', padding: '12px', borderRadius: '16px' }}><Users size={28} color="white" /></div>
-             <div>
-               <h1 style={{ margin: 0, fontSize: '1.8rem' }}>ศูนย์จัดการผู้อยู่ในความดูแล</h1>
-               <p style={{ color: 'var(--text-muted)', margin: 0 }}>{selectedElder ? `กำลังจัดการ: ${selectedElder.display_name}` : 'เลือกผู้สูงอายุเพื่อเริ่มต้น'}</p>
-             </div>
+              <div>
+                <h1 style={{ margin: 0, fontSize: '1.8rem' }}>ศูนย์จัดการผู้อยู่ในความดูแล</h1>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  <p style={{ color: 'var(--text-muted)', margin: 0 }}>{selectedElder ? `กำลังจัดการ: ${selectedElder.display_name}` : 'เลือกผู้สูงอายุเพื่อเริ่มต้น'}</p>
+                  <span style={{ fontWeight: 'bold', color: 'var(--primary)', borderLeft: '2px solid var(--border)', paddingLeft: '12px' }}>
+                    {currentTime.toLocaleTimeString('th-TH')} น.
+                  </span>
+                </div>
+              </div>
           </div>
 
           <div style={{ display: 'flex', gap: '12px' }}>

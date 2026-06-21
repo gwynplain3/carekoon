@@ -182,8 +182,6 @@ export default function NotificationBanner({ userId, targetType = 'real' }: { us
     setNotifications(prev => prev.filter(n => n.id !== id))
   }
 
-  if (notifications.length === 0) return null
-
   return (
     <div style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {!soundEnabled ? (
@@ -197,7 +195,7 @@ export default function NotificationBanner({ userId, targetType = 'real' }: { us
         <div style={{ textAlign: 'right', fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 'bold' }}>📡 ระบบแจ้งเตือนทำงานแบบ Real-time</div>
       )}
       <AnimatePresence>
-        {notifications.map((notif) => (
+        {notifications.length > 0 && notifications.map((notif) => (
           <motion.div
             key={notif.id}
             initial={{ opacity: 0, x: -20, height: 0 }}

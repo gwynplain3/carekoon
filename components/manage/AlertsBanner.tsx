@@ -95,8 +95,6 @@ export default function AlertsBanner({ caretakerId }: { caretakerId: string }) {
     setLoadingIds(prev => prev.filter(i => i !== id))
   }
 
-  if (alerts.length === 0) return null
-
   return (
     <div style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {!soundEnabled && (
@@ -108,7 +106,7 @@ export default function AlertsBanner({ caretakerId }: { caretakerId: string }) {
         </button>
       )}
       <AnimatePresence>
-        {alerts.map(alert => (
+        {alerts.length > 0 && alerts.map(alert => (
           <motion.div 
             initial={{ height: 0, opacity: 0, scale: 0.95 }}
             animate={{ height: 'auto', opacity: 1, scale: 1 }}

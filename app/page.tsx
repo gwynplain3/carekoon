@@ -38,8 +38,15 @@ export default function Home() {
   const targetId = isVirtual ? profile?.id : (selectedElder?.id || (profile?.role !== 'caretaker' ? user?.id : null))
   const targetType = isVirtual ? 'virtual' : (selectedElder?.type || 'real')
 
-  const today = new Date()
-  const thaiDate = today.toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  const [currentTime, setCurrentTime] = useState(new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const thaiDate = currentTime.toLocaleDateString('th-TH', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  const thaiTime = currentTime.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
 
   useEffect(() => {
     if (!loading) {
@@ -154,13 +161,15 @@ export default function Home() {
               </div>
             </div>
             <div>
-              <h1 style={{ margin: 0, fontSize: '2.5rem', fontWeight: '900' }}>สวัสดีครับ, คุณ{profile?.display_name || 'ผู้ใช้งาน'}!</h1>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.4rem', margin: '4px 0 0 0' }}>วันนี้เป็นวันสุขภาพที่ดีครับ 🌿</p>
-            </div>
+            <h1 style={{ margin: 0, fontSize: '2.4rem', fontWeight: '900' }}>{thaiDate}</h1>
+            <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '1.4rem', fontWeight: 'bold' }}>
+               เวลาปัจจุบัน: <span style={{ color: 'var(--primary)', fontVariantNumeric: 'tabular-nums' }}>{thaiTime} น.</span>
+            </p>
+          </div>
           </div>
            <div style={{ textAlign: 'right' }}>
              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--primary-dark)', fontWeight: 'bold', fontSize: '1.2rem', justifyContent: 'flex-end' }}><Calendar size={28} strokeWidth={STROKE_WIDTH} /> {thaiDate}</div>
-             <div style={{ fontSize: '3rem', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'flex-end', color: 'var(--text)' }}><Clock size={40} strokeWidth={STROKE_WIDTH} color="var(--primary)" />{today.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}</div>
+             <div style={{ fontSize: '3rem', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'flex-end', color: 'var(--text)' }}><Clock size={40} strokeWidth={STROKE_WIDTH} color="var(--primary)" />{currentTime.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}</div>
           </div>
         </header>
         
