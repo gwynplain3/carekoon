@@ -1,5 +1,5 @@
-const MAX_AVATAR_PX = 400
-const JPEG_QUALITY = 0.82
+const MAX_AVATAR_PX = 800
+const JPEG_QUALITY = 0.92
 
 export async function compressImage(file: File): Promise<Blob> {
   const bitmap = await createImageBitmap(file)

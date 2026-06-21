@@ -245,30 +245,23 @@ export default function ManagementPage() {
               </div>
 
                {/* Bento Grid layout */}
-              <div className="caretaker-grid">
-                <div className="bento-card-wide">
-                   <WeeklyProgressWidget userId={selectedElder.id} targetType={selectedElder.type} />
+              <div style={{ 
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '32px'
+              }}>
+                <WeeklyProgressWidget userId={selectedElder.id} targetType={selectedElder.type} />
+                
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '24px' }}>
+                  <MedicineWidget userId={selectedElder.id} targetType={selectedElder.type} />
+                  <PhotoUpload userId={selectedElder.id} targetType={selectedElder.type} />
                 </div>
-                 <div className="bento-card-wide">
-                   <AppointmentWidget userId={selectedElder.id} targetType={selectedElder.type} />
-                </div>
-                 <div className="bento-card-wide">
-                   <MedicineWidget userId={selectedElder.id} targetType={selectedElder.type} />
-                </div>
-                <div className="bento-card">
-                   <CalorieWidget userId={selectedElder.id} targetType={selectedElder.type} readOnly />
-                </div>
-                <div className="bento-card">
-                   <WaterWidget userId={selectedElder.id} targetType={selectedElder.type} />
-                </div>
-                <div className="bento-card">
-                   <PhotoUpload userId={selectedElder.id} targetType={selectedElder.type} />
-                </div>
-                <div className="bento-card-large">
-                   <TodoWidget userId={selectedElder.id} targetType={selectedElder.type} />
-                </div>
-                <div className="bento-card-large">
-                   <GroceryWidget userId={selectedElder.id} targetType={selectedElder.type} />
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+                  <CalorieWidget userId={selectedElder.id} targetType={selectedElder.type} readOnly />
+                  <WaterWidget userId={selectedElder.id} targetType={selectedElder.type} />
+                  <TodoWidget userId={selectedElder.id} targetType={selectedElder.type} />
+                  <GroceryWidget userId={selectedElder.id} targetType={selectedElder.type} />
                 </div>
               </div>
             </motion.div>
