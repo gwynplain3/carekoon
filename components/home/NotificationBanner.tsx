@@ -20,13 +20,28 @@ export default function NotificationBanner({ userId, targetType = 'real' }: { us
   const [dismissed, setDismissed] = useState<string[]>([])
   const [soundEnabled, setSoundEnabled] = useState(false)
 
-  // Audio for notifications
+  // Audio Synthesizer for 100% reliability (No Network Needed)
   const playPing = () => {
+    if (!soundEnabled) return
     try {
-      const audio = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_783332483a.mp3')
-      audio.volume = 0.8
-      audio.play().catch(e => console.log('Audio Blocked:', e))
-    } catch (err) { console.error(err) }
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext
+      const ctx = new AudioCtx()
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(880, ctx.currentTime) // High Pitch A5
+      gain.gain.setValueAtTime(0.4, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4)
+      
+      osc.start()
+      osc.stop(ctx.currentTime + 0.4)
+    } catch (e) {
+      console.error('Audio synthesis failed', e)
+    }
   }
 
   useEffect(() => {

@@ -10,11 +10,32 @@ export default function AlertsBanner({ caretakerId }: { caretakerId: string }) {
   const [loadingIds, setLoadingIds] = useState<string[]>([])
   const [soundEnabled, setSoundEnabled] = useState(false)
 
-  // Audio for SOS
+  // Audio Synthesizer for SOS
   const playSirene = () => {
     if (!soundEnabled) return
-    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3')
-    audio.play().catch(e => console.log('Sound blocked'))
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext
+      const ctx = new AudioCtx()
+      
+      // Repeating dual-tone siren
+      for (let i = 0; i < 3; i++) {
+        const time = ctx.currentTime + i * 0.6
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+        
+        osc.frequency.setValueAtTime(660, time)
+        osc.frequency.exponentialRampToValueAtTime(880, time + 0.3)
+        gain.gain.setValueAtTime(0.3, time)
+        gain.gain.exponentialRampToValueAtTime(0.01, time + 0.5)
+        
+        osc.start(time)
+        osc.stop(time + 0.5)
+      }
+    } catch (e) {
+      console.error('Siren synthesis failed', e)
+    }
   }
 
   useEffect(() => {
@@ -71,10 +92,14 @@ export default function AlertsBanner({ caretakerId }: { caretakerId: string }) {
     <div style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {!soundEnabled && (
         <button 
-          onClick={() => setSoundEnabled(true)}
-          style={{ width: '100%', padding: '12px', background: '#fff7ed', border: '1px dashed #ea580c', borderRadius: '16px', color: '#ea580c', fontWeight: 'bold', cursor: 'pointer' }}
+          onClick={() => {
+            setSoundEnabled(true);
+            // We need a slight delay or direct call to unlock the hardware
+            setTimeout(playSirene, 50);
+          }}
+          style={{ width: '100%', padding: '16px', background: '#ea580c', color: 'white', border: 'none', borderRadius: '16px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 8px 20px rgba(234, 88, 12, 0.3)', fontSize: '1.2rem' }}
         >
-          🔊 คลิกที่นี่เพื่อเปิดเสียงแจ้งเตือนความปลอดภัย (SOS Alert Sound)
+          🚨 คลิกเปิดระบบเสียงฉุกเฉิน (ทดสอบไซเรนทันที)
         </button>
       )}
       <AnimatePresence>
