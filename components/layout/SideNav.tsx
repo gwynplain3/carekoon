@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useUser } from '@/lib/hooks/useUser'
-import { Home, MessageSquare, Book, HeartPulse, Settings, Users, Megaphone } from 'lucide-react'
+import { Home, MessageSquare, Book, HeartPulse, Settings, Users, Megaphone, Calendar } from 'lucide-react'
 
 export default function SideNav() {
   const pathname = usePathname()
@@ -12,6 +12,7 @@ export default function SideNav() {
 
   const navItems = isCaretaker ? [
     { label: 'จัดการผู้สูงอายุ', href: '/manage', icon: Users },
+    { label: 'นัดหมายแพทย์', href: '/manage/appointments', icon: Calendar },
     { label: 'สมุดบันทึก', href: '/diary', icon: Book },
     { label: 'ชุมชนคนกันเอง', href: '/forum', icon: MessageSquare },
     { label: 'ประกาศ', href: '/broadcast', icon: Megaphone },

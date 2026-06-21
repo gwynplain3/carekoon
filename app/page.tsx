@@ -139,7 +139,7 @@ export default function Home() {
             </div>
             <div>
               <h1 style={{ margin: 0, fontSize: '2.5rem', fontWeight: '900' }}>สวัสดีครับ, คุณ{profile?.display_name || 'ผู้ใช้งาน'}!</h1>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.4rem', margin: '4px 0 0 0' }}>วันนี้เป็นวัน健康ที่ดีครับ 🌿</p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '1.4rem', margin: '4px 0 0 0' }}>วันนี้เป็นวันสุขภาพที่ดีครับ 🌿</p>
             </div>
           </div>
            <div style={{ textAlign: 'right' }}>
@@ -184,71 +184,52 @@ export default function Home() {
 
         {/* Dashboard Widgets Container */}
         {targetId && (
-          <div className="elder-dashboard-grid">
-            <div className="bento-card-wide" style={{ gridColumn: 'span 2' }}>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
+            gap: '32px' 
+          }}>
+            <div style={{ gridColumn: '1 / -1' }}>
               <SOSButton userId={targetId} targetType={targetType} />
             </div>
             
-            <div className="bento-card-wide" style={{ gridColumn: 'span 2' }}>
+            <div style={{ gridColumn: '1 / -1' }}>
               <FamilyPhotoFrame userId={targetId} targetType={targetType} />
             </div>
 
-            <div className="bento-card-wide" style={{ gridColumn: 'span 2' }}>
+            <div style={{ gridColumn: '1 / -1' }}>
               <WeeklyProgressWidget userId={targetId} targetType={targetType} />
             </div>
-
-            <div className="bento-card-large">
-              <AppointmentWidget userId={targetId} targetType={targetType} />
+            
+            <div style={{ gridRow: 'span 2' }}>
+              <AppointmentWidget userId={targetId} targetType={targetType} isSelfCare={profile?.role === 'elder_self'} />
             </div>
             
-            <div className="bento-card-large">
+            <div style={{ gridRow: 'span 2' }}>
               <MedicineWidget userId={targetId} targetType={targetType} />
             </div>
             
-            <div className="bento-card">
+            <div>
               <CalorieWidget userId={targetId} targetType={targetType} />
             </div>
 
-            <div className="bento-card-large">
+            <div style={{ gridRow: 'span 2' }}>
                <TodoWidget userId={targetId} targetType={targetType} />
             </div>
 
-            <div className="bento-card">
+            <div>
                <WaterWidget userId={targetId} targetType={targetType} />
             </div>
 
-            <div className="bento-card">
+            <div>
                <GroceryWidget userId={targetId} targetType={targetType} />
             </div>
 
-            <div className="bento-card-wide" style={{ gridColumn: 'span 2' }}>
+            <div style={{ gridColumn: '1 / -1' }}>
               <DiaryBlogWidget userId={targetId} targetType={targetType} />
             </div>
           </div>
         )}
-
-        <style jsx global>{`
-          .elder-dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-          }
-          .bento-card-wide {
-            grid-column: span 2;
-          }
-          .bento-card-large {
-            grid-column: span 1;
-            grid-row: span 2;
-          }
-          @media (max-width: 1024px) {
-            .elder-dashboard-grid {
-              grid-template-columns: 1fr;
-            }
-            .bento-card-wide, .bento-card-large {
-              grid-column: span 1 !important;
-            }
-          }
-        `}</style>
       </div>
     </LayoutTransition>
   )
