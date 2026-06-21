@@ -48,11 +48,14 @@ export default function PostDetailPage() {
   async function fetchPostAndComments() {
     setLoading(true)
     
+    // Use numeric ID if possible for BIGINT columns
+    const targetId = !isNaN(Number(id)) ? Number(id) : id
+
     // Fetch post using community_feed view for unified author info
     const { data: postData, error: postError } = await supabase
       .from('community_feed')
       .select('*, comments(count)')
-      .eq('id', id)
+      .eq('id', targetId)
       .single()
 
     if (postError) {
@@ -67,7 +70,7 @@ export default function PostDetailPage() {
     const { data: commentData, error: commentError } = await supabase
       .from('comment_feed')
       .select('*')
-      .eq('post_id', id)
+      .eq('post_id', targetId)
       .order('created_at', { ascending: true })
 
     if (!commentError) {

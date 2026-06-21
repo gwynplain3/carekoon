@@ -249,18 +249,22 @@ export default function ForumPage() {
                  <h3 style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}><MessageCircle /> ความคิดเห็น ({comments.length})</h3>
                  
                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '32px' }}>
-                    {loadingComments ? <Loader2 className="animate-spin" /> : comments.map(c => (
-                      <div key={c.id} style={{ display: 'flex', gap: '16px', background: '#f8fafc', padding: '20px', borderRadius: '24px' }}>
-                         <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'var(--primary-light)', flexShrink: 0, overflow: 'hidden' }}>
-                            {c.author_avatar ? <img src={c.author_avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <User size={20} color="var(--primary)" style={{ margin: '10px' }} />}
-                         </div>
-                         <div>
-                            <div style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{c.author_name}</div>
-                            <p style={{ margin: '4px 0', fontSize: '1.2rem', color: 'var(--text)' }}>{c.content}</p>
-                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{new Date(c.created_at).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}</div>
-                         </div>
-                      </div>
-                    ))}
+                     {loadingComments ? (
+                       <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}><Loader2 className="animate-spin" /></div>
+                     ) : comments.length === 0 ? (
+                       <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '1.2rem', padding: '20px' }}>ยังไม่มีความคิดเห็นครับ</p>
+                     ) : comments.map(c => (
+                       <div key={c.id} style={{ display: 'flex', gap: '16px', background: '#f8fafc', padding: '20px', borderRadius: '24px' }}>
+                          <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'var(--primary-light)', flexShrink: 0, overflow: 'hidden' }}>
+                             {c.author_avatar ? <img src={c.author_avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <User size={20} color="var(--primary)" style={{ margin: '10px' }} />}
+                          </div>
+                          <div>
+                             <div style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'var(--primary-dark)' }}>{c.author_name}</div>
+                             <p style={{ margin: '4px 0', fontSize: '1.3rem', color: 'var(--text)', lineHeight: '1.5' }}>{c.content}</p>
+                             <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{new Date(c.created_at).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}</div>
+                          </div>
+                       </div>
+                     ))}
                  </div>
 
                  {/* Comment Form */}
