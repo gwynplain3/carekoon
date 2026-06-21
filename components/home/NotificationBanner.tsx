@@ -18,11 +18,13 @@ interface Notification {
 export default function NotificationBanner({ userId, targetType = 'real' }: { userId: string, targetType?: 'real' | 'virtual' }) {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [dismissed, setDismissed] = useState<string[]>([])
+  const [soundEnabled, setSoundEnabled] = useState(false)
 
   // Audio for notifications
   const playPing = () => {
+    if (!soundEnabled) return
     const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3')
-    audio.play().catch(e => console.log('Sound blocked by browser policy until user interaction'))
+    audio.play().catch(e => console.log('Sound blocked'))
   }
 
   useEffect(() => {
@@ -32,14 +34,10 @@ export default function NotificationBanner({ userId, targetType = 'real' }: { us
       // Realtime subscription
       const channel = supabase
         .channel('elder-notifications')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'medicines' }, (payload) => {
-          console.log('Med change detected', payload)
-          checkNotifications(true) // Pass true to play sound only on new items
-        })
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'appointments' }, (payload) => {
-          console.log('Appt change detected', payload)
-          checkNotifications(true)
-        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'medicines' }, (p) => checkNotifications(true))
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'medicines' }, () => checkNotifications(false))
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'appointments' }, (p) => checkNotifications(true))
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'appointments' }, () => checkNotifications(false))
         .subscribe()
 
       const interval = setInterval(checkNotifications, 30000)
@@ -149,6 +147,14 @@ export default function NotificationBanner({ userId, targetType = 'real' }: { us
 
   return (
     <div style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {!soundEnabled && (
+        <button 
+          onClick={() => setSoundEnabled(true)}
+          style={{ width: '100%', padding: '12px', background: 'var(--primary-light)', border: '1px dashed var(--primary)', borderRadius: '16px', color: 'var(--primary-dark)', fontWeight: 'bold', cursor: 'pointer' }}
+        >
+          🔔 คลิกตรงนี้หนึ่งครั้ง เพื่อเปิดระบบเสียงแจ้งเตือนอัตโนมัติครับ
+        </button>
+      )}
       <AnimatePresence>
         {notifications.map((notif) => (
           <motion.div

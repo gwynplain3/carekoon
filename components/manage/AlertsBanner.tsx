@@ -8,6 +8,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 export default function AlertsBanner({ caretakerId }: { caretakerId: string }) {
   const [alerts, setAlerts] = useState<any[]>([])
   const [loadingIds, setLoadingIds] = useState<string[]>([])
+  const [soundEnabled, setSoundEnabled] = useState(false)
+
+  // Audio for SOS
+  const playSirene = () => {
+    if (!soundEnabled) return
+    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3')
+    audio.play().catch(e => console.log('Sound blocked'))
+  }
 
   useEffect(() => {
     if (!caretakerId) return
@@ -17,7 +25,13 @@ export default function AlertsBanner({ caretakerId }: { caretakerId: string }) {
 
     // Real-time listener
     const channel = supabase.channel('alerts_sync')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'alerts' }, fetchAlerts)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'alerts' }, (payload) => {
+        console.log('New alert!', payload)
+        playSirene()
+        fetchAlerts()
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'alerts' }, fetchAlerts)
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'alerts' }, fetchAlerts)
       .subscribe()
       
     return () => { supabase.removeChannel(channel) }
@@ -55,6 +69,14 @@ export default function AlertsBanner({ caretakerId }: { caretakerId: string }) {
 
   return (
     <div style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {!soundEnabled && (
+        <button 
+          onClick={() => setSoundEnabled(true)}
+          style={{ width: '100%', padding: '12px', background: '#fff7ed', border: '1px dashed #ea580c', borderRadius: '16px', color: '#ea580c', fontWeight: 'bold', cursor: 'pointer' }}
+        >
+          🔊 คลิกที่นี่เพื่อเปิดเสียงแจ้งเตือนความปลอดภัย (SOS Alert Sound)
+        </button>
+      )}
       <AnimatePresence>
         {alerts.map(alert => (
           <motion.div 
