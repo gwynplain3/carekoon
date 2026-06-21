@@ -41,7 +41,7 @@ export default function ForumPage() {
     setLoading(true)
     const { data, error } = await supabase
       .from('community_feed')
-      .select('*')
+      .select('*, comments(count)')
       .order('created_at', { ascending: false })
     
     if (!error) setPosts(data || [])
@@ -88,20 +88,43 @@ export default function ForumPage() {
 
   async function handleAddComment(e: React.FormEvent) {
     e.preventDefault()
-    if (!newComment.trim() || commenting || !selectedPost) return
+    if (!newComment.trim() || commenting || !selectedPost || !profile) return
     setCommenting(true)
+
+    // Anti-spam: check last comment time
+    const query = supabase
+      .from('comments')
+      .select('created_at')
+      .order('created_at', { ascending: false })
+      .limit(1)
+
+    if (isVirtual) query.eq('virtual_elder_id', profile.id)
+    else query.eq('user_id', user?.id)
+
+    const { data: recentComments } = await query
+
+    if (recentComments && recentComments.length > 0) {
+      const lastCommentTime = new Date(recentComments[0].created_at).getTime()
+      const now = new Date().getTime()
+      if (now - lastCommentTime < 5000) { // 5 second cooldown
+        alert('กรุณารอสักครู่ก่อนแสดงความเห็นอีกครั้งครับ')
+        setCommenting(false)
+        return
+      }
+    }
 
     const payload: any = { 
       post_id: selectedPost.id, 
       content: newComment.trim() 
     }
-    if (isVirtual && profile) payload.virtual_elder_id = profile.id
-    else if (user) payload.user_id = user.id
+    if (isVirtual) payload.virtual_elder_id = profile.id
+    else payload.user_id = user?.id
 
     const { error } = await supabase.from('comments').insert(payload)
     if (!error) {
       setNewComment('')
       fetchComments(selectedPost.id)
+      fetchPosts() // Update count in list
     }
     setCommenting(false)
   }

@@ -44,7 +44,7 @@ export default function DiaryBlogWidget({ userId, targetType, readOnly = false }
     } else {
       // Community Social Feed (Public)
       const { data, error } = await supabase.from('community_feed')
-        .select('*')
+        .select('*, comments(count)')
         .order('created_at', { ascending: false })
         .limit(20)
       if (!error) setBlogs(data || [])

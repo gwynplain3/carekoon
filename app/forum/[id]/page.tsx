@@ -13,9 +13,10 @@ interface Comment {
   id: number
   content: string
   created_at: string
-  profiles: {
-    display_name: string
-  }
+  author_name: string
+  author_avatar: string | null
+  user_id: string | null
+  virtual_elder_id: string | null
 }
 
 interface Post {
@@ -26,15 +27,14 @@ interface Post {
   image_url: string | null
   created_at: string
   user_id: string
-  profiles: {
-    display_name: string
-  }
+  author_name: string
+  author_avatar: string | null
 }
 
 export default function PostDetailPage() {
   const { id } = useParams()
   const router = useRouter()
-  const { user } = useUser()
+  const { user, profile, isVirtual } = useUser()
   const [post, setPost] = useState<Post | null>(null)
   const [comments, setComments] = useState<Comment[]>([])
   const [loading, setLoading] = useState(true)
@@ -48,10 +48,10 @@ export default function PostDetailPage() {
   async function fetchPostAndComments() {
     setLoading(true)
     
-    // Fetch post
+    // Fetch post using community_feed view for unified author info
     const { data: postData, error: postError } = await supabase
-      .from('posts')
-      .select('*, profiles(display_name)')
+      .from('community_feed')
+      .select('*, comments(count)')
       .eq('id', id)
       .single()
 
@@ -63,10 +63,10 @@ export default function PostDetailPage() {
 
     setPost(postData)
 
-    // Fetch comments
+    // Fetch comments using the view for combined authors
     const { data: commentData, error: commentError } = await supabase
-      .from('comments')
-      .select('*, profiles(display_name)')
+      .from('comment_feed')
+      .select('*')
       .eq('post_id', id)
       .order('created_at', { ascending: true })
 
@@ -79,17 +79,21 @@ export default function PostDetailPage() {
 
   async function handleComment(e: React.FormEvent) {
     e.preventDefault()
-    if (!commentText.trim() || submitting || !user) return
+    if (!commentText.trim() || submitting || !profile) return
 
     setSubmitting(true)
     
-    // Anti-spam: check last comment time (simple client-side + server policy check)
-    const { data: recentComments } = await supabase
+    // Anti-spam: check last comment time
+    const query = supabase
       .from('comments')
       .select('created_at')
-      .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .limit(1)
+
+    if (isVirtual) query.eq('virtual_elder_id', profile.id)
+    else query.eq('user_id', user?.id)
+
+    const { data: recentComments } = await query
 
     if (recentComments && recentComments.length > 0) {
       const lastCommentTime = new Date(recentComments[0].created_at).getTime()
@@ -101,13 +105,17 @@ export default function PostDetailPage() {
       }
     }
 
+    const payload: any = {
+      post_id: id,
+      content: commentText.trim()
+    }
+
+    if (isVirtual) payload.virtual_elder_id = profile.id
+    else payload.user_id = user?.id
+
     const { error } = await supabase
       .from('comments')
-      .insert({
-        post_id: id,
-        user_id: user.id,
-        content: commentText.trim()
-      })
+      .insert(payload)
 
     if (!error) {
       setCommentText('')
@@ -173,8 +181,10 @@ export default function PostDetailPage() {
           <h1 style={{ fontSize: '2.6rem', marginBottom: '24px', color: 'var(--primary-dark)' }}>{post.title}</h1>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px', color: 'var(--text-muted)' }}>
-            <User size={24} />
-            <span style={{ fontSize: '1.3rem', fontWeight: '600' }}>{post.profiles?.display_name}</span>
+            <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary-light)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+               {post.author_avatar ? <img src={post.author_avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <User size={24} />}
+            </div>
+            <span style={{ fontSize: '1.3rem', fontWeight: '600', color: 'var(--text)' }}>{post.author_name}</span>
             <span style={{ margin: '0 12px' }}>•</span>
             <Clock size={24} />
             <span style={{ fontSize: '1.3rem' }}>{date}</span>
@@ -249,11 +259,15 @@ export default function PostDetailPage() {
                       <div style={{ 
                         width: '40px', height: '40px', borderRadius: '50%', background: 'var(--primary-light)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-dark)',
-                        fontSize: '1.1rem', fontWeight: 'bold'
+                        fontSize: '1.1rem', fontWeight: 'bold', overflow: 'hidden'
                       }}>
-                        {comment.profiles?.display_name?.[0] || 'U'}
+                        {comment.author_avatar ? (
+                          <img src={comment.author_avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={comment.author_name} />
+                        ) : (
+                          comment.author_name?.[0] || 'U'
+                        )}
                       </div>
-                      <span style={{ fontWeight: '700', fontSize: '1.2rem' }}>{comment.profiles?.display_name}</span>
+                      <span style={{ fontWeight: '700', fontSize: '1.2rem' }}>{comment.author_name}</span>
                       <span style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>
                         {new Date(comment.created_at).toLocaleDateString('th-TH')}
                       </span>
