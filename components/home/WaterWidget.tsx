@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { Droplets, Plus, Minus, Loader2 } from 'lucide-react'
 import { useUser } from '@/lib/hooks/useUser'
+import { motion } from 'framer-motion'
 
 const GOAL = 8
 
@@ -64,50 +65,65 @@ export default function WaterWidget({ userId, targetType = 'real', readOnly = fa
   const done = glasses >= GOAL
 
   return (
-    <section style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-        <div style={{ backgroundColor: '#0EA5E9', padding: '10px', borderRadius: '12px' }}>
-          <Droplets size={24} color="white" />
+    <div className="card" style={{ padding: '32px', borderRadius: '32px', border: '1px solid var(--border)', background: 'white', display: 'flex', flexDirection: 'column', gap: '24px', position: 'relative', overflow: 'hidden' }}>
+       {/* Background Decoration */}
+       <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'rgba(14, 165, 233, 0.05)', borderRadius: '50%', zIndex: 0 }} />
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', position: 'relative', zIndex: 1 }}>
+        <div style={{ backgroundColor: '#0EA5E9', padding: '12px', borderRadius: '16px', boxShadow: '0 8px 16px rgba(14, 165, 233, 0.2)' }}>
+          <Droplets size={28} color="white" />
         </div>
-        <h2 style={{ margin: 0, fontSize: '1.2rem' }}>การดื่มน้ำ</h2>
+        <h2 style={{ margin: 0, fontSize: '1.6rem', fontWeight: '800' }}>การดื่มน้ำประจำวัน</h2>
       </div>
 
-      <div className="card" style={{ padding: effectiveReadOnly ? '20px' : '28px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', position: 'relative', zIndex: 1 }}>
         {loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '10px' }}><Loader2 className="animate-spin" size={32} color="#0ea5e9" /></div>
+          <div style={{ padding: '40px' }}><Loader2 className="animate-spin" size={40} color="#0ea5e9" /></div>
         ) : (
-          <div style={{ width: '100%' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: effectiveReadOnly ? '12px' : '24px' }}>
-              {(true) && (
-                <button onClick={() => update(glasses - 1)} disabled={glasses === 0} style={{ width: '56px', height: '56px', borderRadius: '50%', border: '2px solid #e2e8f0', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Minus size={20} color="#64748b" /></button>
-              )}
+          <div style={{ width: '100%', textAlign: 'center' }}>
+            <div style={{ marginBottom: '32px' }}>
+              <div style={{ fontSize: '4.5rem', fontWeight: '900', color: '#0ea5e9', lineHeight: 1, textShadow: '0 10px 20px rgba(14, 165, 233, 0.1)' }}>
+                {glasses}
+              </div>
+              <div style={{ fontSize: '1.2rem', color: 'var(--text-muted)', fontWeight: 'bold', marginTop: '4px' }}>จากเป้าหมาย {GOAL} แก้ว</div>
+            </div>
 
-              <div style={{ textAlign: 'center', flex: 1 }}>
-                <div style={{ fontSize: effectiveReadOnly ? '2.5rem' : '3.5rem', fontWeight: '900', color: done ? '#0369a1' : '#1e293b', lineHeight: 1 }}>
-                  {glasses}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '32px' }}>
+               <button 
+                onClick={() => update(glasses - 1)} 
+                disabled={glasses === 0} 
+                style={{ flex: 1, height: '64px', borderRadius: '20px', border: '2px solid var(--border)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: glasses === 0 ? 0.3 : 1, transition: 'all 0.2s' }}
+               >
+                 <Minus size={28} color="#64748b" strokeWidth={3} />
+               </button>
+
+               <button 
+                onClick={() => update(glasses + 1)} 
+                disabled={done} 
+                style={{ flex: 2, height: '64px', borderRadius: '20px', border: 'none', background: '#0ea5e9', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', fontWeight: '900', fontSize: '1.3rem', boxShadow: '0 10px 20px rgba(14, 165, 233, 0.3)', opacity: done ? 0.5 : 1, transition: 'all 0.2s' }}
+               >
+                 <Plus size={28} strokeWidth={3} /> ดื่มน้ำ
+               </button>
+            </div>
+
+            <div style={{ background: '#e2e8f0', borderRadius: '12px', height: '16px', overflow: 'hidden', position: 'relative' }}>
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: `${pct}%` }}
+                style={{ height: '100%', background: 'linear-gradient(90deg, #38bdf8 0%, #0ea5e9 100%)', boxShadow: '0 0 20px rgba(14, 165, 233, 0.4)' }} 
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', marginTop: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
+              {Array.from({ length: GOAL }).map((_, i) => (
+                <div key={i} style={{ fontSize: '1.8rem', transform: `scale(${i < glasses ? 1.2 : 0.9})`, opacity: i < glasses ? 1 : 0.15, filter: i < glasses ? 'none' : 'grayscale(1)', transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
+                  🥤
                 </div>
-                <div style={{ fontSize: '0.9rem', color: '#64748b' }}>/ {GOAL} แก้ว</div>
-              </div>
-
-              {(true) && (
-                <button onClick={() => update(glasses + 1)} disabled={done} style={{ width: '56px', height: '56px', borderRadius: '50%', border: 'none', background: '#0ea5e9', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Plus size={24} /></button>
-              )}
+              ))}
             </div>
-
-            <div style={{ background: '#e2e8f0', borderRadius: '6px', height: '12px', overflow: 'hidden', marginBottom: effectiveReadOnly ? '10px' : '0' }}>
-              <div style={{ height: '100%', background: done ? '#0369a1' : '#0ea5e9', width: `${pct}%`, transition: 'width 0.4s' }} />
-            </div>
-
-            {!effectiveReadOnly && (
-              <div style={{ display: 'flex', gap: '6px', marginTop: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
-                {Array.from({ length: GOAL }).map((_, i) => (
-                  <span key={i} style={{ fontSize: '1.4rem', opacity: i < glasses ? 1 : 0.2 }}>🥤</span>
-                ))}
-              </div>
-            )}
           </div>
         )}
       </div>
-    </section>
+    </div>
   )
 }

@@ -51,18 +51,18 @@ export default function PhotoUpload({ userId, targetType, onUploadSuccess }: { u
   }
 
   return (
-    <div className="card" style={{ padding: '24px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ background: 'var(--primary)', padding: '10px', borderRadius: '12px', color: 'white' }}>
-            <Camera size={24} />
+    <div className="card" style={{ padding: '32px', borderRadius: '32px', background: 'white', border: '1px solid var(--border)', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)', padding: '12px', borderRadius: '16px', color: 'white' }}>
+            <Camera size={28} strokeWidth={2.5} />
           </div>
-          <h2 style={{ margin: 0, fontSize: '1.25rem' }}>รูปภาพครอบครัว</h2>
+          <h2 style={{ margin: 0, fontSize: '1.6rem', fontWeight: '800' }}>กรอบรูปครอบครัว</h2>
         </div>
         {!showForm && (
           <button 
             onClick={() => setShowForm(true)}
-            style={{ color: 'var(--primary)', background: 'var(--primary-light)', border: 'none', padding: '8px 16px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+            style={{ color: 'var(--primary)', background: 'var(--primary-light)', border: 'none', padding: '12px 24px', borderRadius: '16px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1.1rem', transition: 'all 0.2s' }}
           >
             แชร์รูปใหม่
           </button>
@@ -77,24 +77,26 @@ export default function PhotoUpload({ userId, targetType, onUploadSuccess }: { u
             exit={{ height: 0, opacity: 0 }}
             style={{ overflow: 'hidden' }}
           >
-            <div style={{ background: '#f8fafc', padding: '20px', borderRadius: '20px', marginBottom: '16px', border: '1px solid var(--border)' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', fontSize: '0.9rem' }}>คำบรรยายใต้ภาพ</label>
-              <input 
-                placeholder="เช่น ไปเที่ยวทะเลด้วยกัน..."
-                value={caption}
-                onChange={e => setCaption(e.target.value)}
-                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--border)', marginBottom: '16px', outline: 'none' }}
-              />
+            <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '24px', marginBottom: '20px', border: '1px solid var(--border)' }}>
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', fontSize: '1.1rem', color: 'var(--text)' }}>คำบรรยายใต้ภาพ</label>
+                <input 
+                  placeholder="เช่น ไปเที่ยวทะเลด้วยกัน..."
+                  value={caption}
+                  onChange={e => setCaption(e.target.value)}
+                  style={{ width: '100%', height: '56px', padding: '0 20px', borderRadius: '16px', border: '1px solid var(--border)', fontSize: '1.1rem', outline: 'none', background: 'white' }}
+                />
+              </div>
               
-              <div style={{ display: 'flex', gap: '10px' }}>
-                <label style={{ flex: 1, height: '52px', background: 'var(--primary)', color: 'white', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', cursor: 'pointer', fontWeight: 'bold' }}>
-                  {uploading ? <Loader2 className="animate-spin" /> : <ImageIcon size={20} />}
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <label style={{ flex: 1, height: '60px', background: 'var(--primary)', color: 'white', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.2rem', boxShadow: '0 8px 16px rgba(2, 132, 199, 0.2)' }}>
+                  {uploading ? <Loader2 className="animate-spin" /> : <ImageIcon size={24} />}
                   {uploading ? 'กำลังส่ง...' : 'เลือกรูปภาพ'}
                   <input type="file" hidden accept="image/*" onChange={handleUpload} disabled={uploading} />
                 </label>
                 <button 
                   onClick={() => setShowForm(false)}
-                  style={{ padding: '0 20px', background: 'white', border: '1px solid var(--border)', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer' }}
+                  style={{ padding: '0 24px', background: 'white', border: '1px solid var(--border)', borderRadius: '18px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1.1rem' }}
                 >
                   ยกเลิก
                 </button>
@@ -104,7 +106,10 @@ export default function PhotoUpload({ userId, targetType, onUploadSuccess }: { u
         )}
       </AnimatePresence>
 
-      <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>รูปภาพจะไปปรากฏใน "กรอบรูปครอบครัว" ในหน้าจอของผู้สูงอายุทันทีครับ</p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: '#f0f9ff', borderRadius: '16px', border: '1px solid #bae6fd' }}>
+        <ImageIcon size={20} color="var(--primary)" />
+        <p style={{ color: 'var(--primary-dark)', fontSize: '1rem', margin: 0, fontWeight: '500' }}>รูปภาพจะไปปรากฏใน "กรอบรูปครอบครัว" ของผู้สูงอายุทันทีครับ</p>
+      </div>
     </div>
   )
 }

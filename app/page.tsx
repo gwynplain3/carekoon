@@ -16,6 +16,7 @@ import SOSButton from '@/components/home/SOSButton'
 import FamilyPhotoFrame from '@/components/home/FamilyPhotoFrame'
 import CalorieWidget from '@/components/home/CalorieWidget'
 import AppointmentWidget from '@/components/home/AppointmentWidget'
+import NotificationBanner from '@/components/home/NotificationBanner'
 import Popup from '@/components/ui/Popup'
 import { 
   Plus, Loader2, ListTodo, Calendar, Clock, BookOpen, MessageSquare, ChevronRight, HeartPulse, Droplets, ShoppingCart, Users, Megaphone, Camera, User, Lock
@@ -189,6 +190,7 @@ export default function Home() {
             flexDirection: 'column',
             gap: '32px'
           }}>
+            <NotificationBanner userId={targetId} targetType={targetType} />
             <SOSButton userId={targetId} targetType={targetType} />
             <FamilyPhotoFrame userId={targetId} targetType={targetType} />
             <WeeklyProgressWidget userId={targetId} targetType={targetType} />
@@ -205,7 +207,6 @@ export default function Home() {
                <GroceryWidget userId={targetId} targetType={targetType} />
             </div>
 
-            <DiaryBlogWidget userId={targetId} targetType={targetType} />
           </div>
         )}
       </div>
