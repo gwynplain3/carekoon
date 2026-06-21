@@ -126,10 +126,12 @@ export default function DiaryPage() {
               </motion.div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
-                <motion.button whileHover={{ y: -4, scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={() => setShowAdd(true)} style={{ width: '100%', padding: '40px', borderRadius: '40px', border: '4px dashed var(--primary-light)', background: 'var(--primary-light)', color: 'var(--primary-dark)', fontWeight: '900', fontSize: '1.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', transition: 'all 0.3s' }}>
-                  <div style={{ background: 'var(--primary)', padding: '12px', borderRadius: '15px' }}><PenLine size={32} color="white" /></div>
-                  เริ่มเขียนบันทึกความทรงจำใหม่
-                </motion.button>
+                {!isCaretaker && (
+                  <motion.button whileHover={{ y: -4, scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={() => setShowAdd(true)} style={{ width: '100%', padding: '40px', borderRadius: '40px', border: '4px dashed var(--primary-light)', background: 'var(--primary-light)', color: 'var(--primary-dark)', fontWeight: '900', fontSize: '1.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', transition: 'all 0.3s' }}>
+                    <div style={{ background: 'var(--primary)', padding: '12px', borderRadius: '15px' }}><PenLine size={32} color="white" /></div>
+                    เริ่มเขียนบันทึกความทรงจำใหม่
+                  </motion.button>
+                )}
 
                 {loading ? (
                   <div style={{ textAlign: 'center', padding: '100px' }}><Loader2 className="animate-spin" color="var(--primary)" size={64} /></div>
